@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel financiero — Taranis Black</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: informe de consultoría para una CEO; seco, preciso, sin adornos.
+IDEA: la hoja de control de un director financiero: presupuesto en gris, real en negro, desvío en rojo.
+PICTURE: la cascada del hueco de EBITDA, del presupuesto al real, con las cinco líneas de sobrecosto en rojo.
+COLOUR and TYPE: blanco, negro, rojo señal #e4002b, un gris; Archivo ancho 112 peso 800 + Archivo.
+LAYOUT: borde izquierdo estricto, regla superior gruesa, secciones con filete negro.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#0b0b0b,#f2f2f2);--grey:light-dark(#666,#a3a3a3);--line:light-dark(#d6d6d6,#2e2e2e);--soft:light-dark(#f3f3f3,#181818);--mute:light-dark(#c4c4c4,#4a4a4a);--red:#e4002b;--amber:#b7791f;--green:#2f855a}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,4.6vw,52px);max-width:24ch}
+h2{font-size:clamp(22px,2.4vw,30px)}
+h3{font-size:18px;font-stretch:100%}
+.rule{border-top:8px solid var(--ink)}
+.meta{color:var(--grey);font-size:14px;margin:14px 0 0}
+.lede{font-size:17px;max-width:72ch;margin:18px 0 0}
+.lede b{font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:28px}
+.kpis div{padding:14px 16px 4px 0;border-right:1px solid var(--line)}
+.kpis div:last-child{border-right:0}
+.kpis b{display:block;font-stretch:112%;font-weight:800;font-size:clamp(22px,2.4vw,30px);white-space:nowrap;font-variant-numeric:tabular-nums}
+.kpis b.r{color:var(--red)}
+.kpis div>span{display:block;font-size:14px;color:var(--grey)}
+section{margin-top:56px;border-top:3px solid var(--ink);padding-top:20px}
+.note{font-size:13px;color:var(--grey);margin:10px 0 0;max-width:90ch}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--grey);margin:12px 0 4px}
+.legend i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+.legend i.l{height:3px;vertical-align:3px}
+.fig{position:relative;margin-top:8px}
+.fig svg{display:block;width:100%;overflow:visible}
+.fig text{font:12px Archivo,system-ui,sans-serif;fill:var(--grey)}
+.fig text.v{fill:var(--ink);font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
+.two>div{border-top:1px solid var(--line);padding-top:12px}
+.tip{position:absolute;pointer-events:none;background:var(--bg);border:1.5px solid var(--ink);padding:6px 10px;font-size:13px;line-height:1.4;white-space:nowrap;z-index:2}
+.wf{margin-top:12px}
+.wf .r{display:grid;grid-template-columns:minmax(0,17rem) minmax(0,1fr) 5rem;gap:14px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.wf .lab{font-size:15px}
+.wf .lab.t{font-weight:700}
+.wf .trk{position:relative;height:22px}
+.wf .bar{position:absolute;top:0;height:100%}
+.wf .val{text-align:right;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pr{margin-top:12px}
+.pr .r{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.pr .trk{position:relative;height:46px}
+.pr .bar{position:absolute;top:0;height:22px}
+.pr .lo,.pr .hi{position:absolute;top:26px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pr .ref{position:absolute;top:-6px;bottom:-6px;border-left:2px dashed var(--grey)}
+.pr .reflab{font-size:12px;color:var(--grey);position:absolute;top:-22px;transform:translateX(-50%);white-space:nowrap}
+select{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 12px;border:2px solid var(--ink);background:var(--bg);color:var(--ink)}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;border-bottom:2px solid var(--ink)}
+td.n,th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.nw{white-space:nowrap}
+.scroll{overflow-x:auto}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+ul.h{margin:12px 0 0;padding-left:20px;max-width:90ch}
+ul.h li{margin:6px 0}
+ul.h b{font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:12px;font-weight:600;border:1.5px solid var(--ink);padding:0 8px;margin-left:6px;white-space:nowrap}
+.tag.r{border-color:var(--red);color:var(--red)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);margin-top:14px}
+.cards div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 14px}
+.cards b{display:block;font-size:14px}
+.cards p{margin:4px 0 0;font-size:15px}
+.prompt{margin-top:14px;background:var(--soft);border-left:6px solid var(--ink)}
+.prompt pre{margin:0;padding:18px;white-space:pre-wrap;font:14px/1.5 Archivo,system-ui,sans-serif;max-height:420px;overflow:auto}
+button{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 18px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-top:12px}
+button:focus-visible,select:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.ok{font-size:14px;margin-left:10px;color:var(--grey)}
+footer{color:var(--grey);font-size:13px;margin-top:48px;border-top:1px solid var(--line);padding-top:14px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis div:nth-child(2){border-right:0}}
+@media(max-width:640px){.two,.cards{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:minmax(0,1fr)}.kpis div{border-right:0;border-bottom:1px solid var(--line)}
+.wf .r{grid-template-columns:minmax(0,1fr) 4.5rem}.wf .trk{grid-column:1/-1;grid-row:2}
+.pr .r{grid-template-columns:minmax(0,1fr)}
+table{font-size:13px}}
+@media(prefers-reduced-motion:no-preference){.wf .bar{animation:grow .8s ease-out both}@keyframes grow{from{transform:scaleX(0);transform-origin:left}}}
+</style>
+<style id="tbnav-css">
+.tbnav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px);font:600 13px/1.3 Archivo,system-ui,sans-serif;color:var(--grey);border-bottom:1px solid var(--line);background:var(--bg)}
+.tbnav a{color:var(--ink);text-decoration:none}.tbnav a:hover{color:var(--red)}
+.tbnav .pos{font-stretch:112%;font-weight:800;color:var(--red)}
+.tbnav-foot{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:22px max(5vw,16px) 40px;border-top:3px solid var(--ink);margin-top:8px;font:600 15px/1.3 Archivo,system-ui,sans-serif}
+.tbnav-foot a{color:var(--ink);text-decoration:none}.tbnav-foot a:hover{color:var(--red)}
+.tbnav-foot small{display:block;color:var(--grey);font-size:12px;font-weight:600}
+.tbnav-foot .nx{text-align:right}.tbnav-foot .ix{text-align:center;color:var(--red)}
+@media print{.tbnav,.tbnav-foot{display:none}}
+</style></head>
+<body><nav class="tbnav" aria-label="Navegación de evidencias"><a href="index.html">← Taranis Black · Evidencias</a><span><span class="pos">06 / 06</span> · Panel financiero · R4 · Etapa 2</span><span><a href="ishikawa-6m.html">← Anterior</a></span></nav>
+<header class="band rule"><div class="wrap">
+<h1>Cinco líneas de sobrecosto explican el <span data-v="pct_hueco">—</span> del hueco de EBITDA</h1>
+<p class="meta">Panel financiero · Taranis Black · Ruta 4, Etapa 2 · Challenge ONE AI for Business G11 · Carlos Hurtado Rojas · Cuatro trimestres del kit de datos (archivo 05), en USD</p>
+<p class="lede">El EBITDA real quedó <b data-v="hueco">—</b> por debajo del presupuesto (<b data-v="var_ebitda">—</b>) con ingresos casi en línea (<b data-v="var_ingresos">—</b>). Cinco líneas de sobrecosto del flujo B2B suman <b data-v="sobrecosto5">—</b>, el <b data-v="pct_hueco">—</b> del hueco, y el <b data-v="pct_s2">—</b> de ese sobrecosto ocurrió en el segundo semestre.</p>
+<div class="kpis">
+<div><span>Ingresos brutos reales, año</span><b data-v="ingresos_real">—</b><span>Presupuesto <span data-v="ingresos_ppto">—</span></span></div>
+<div><span>EBITDA real, año</span><b data-v="ebitda_real">—</b><span>Hueco <span data-v="hueco">—</span> frente al presupuesto</span></div>
+<div><span>Margen EBITDA real, año</span><b data-v="margen_real">—</b><span>Presupuesto <span data-v="margen_ppto">—</span></span></div>
+<div><span>Sobrecosto en 5 líneas operativas</span><b class="r" data-v="sobrecosto5">—</b><span><span data-v="pct_hueco">—</span> del hueco de EBITDA</span></div>
+</div>
+</div></header>
+
+<main class="band" style="padding-top:0"><div class="wrap">
+
+<section id="trimestres">
+<div class="row"><h2>Real frente a presupuesto por trimestre</h2>
+<select id="metrica" aria-label="Indicador"><option value="ingresos">Ingresos brutos</option><option value="ebitda">EBITDA</option></select></div>
+<div class="legend"><span><i style="background:var(--mute)"></i>Presupuesto</span><span><i style="background:var(--ink)"></i>Real</span></div>
+<div class="fig" id="ch-q" role="img" aria-label="Barras de presupuesto y real por trimestre, en USD millones"></div>
+<p class="note">Los ingresos crecen cada trimestre y siguen al presupuesto; el EBITDA real se separa desde el T3. Fuente: hoja Resultados_trimestrales, filas 5 y 21.</p>
+</section>
+
+<section id="cascada">
+<h2>Cascada del hueco de EBITDA: del presupuesto al real</h2>
+<div class="wf" id="ch-casc" aria-label="Cascada del EBITDA presupuestado al real, en USD millones"></div>
+<p class="note">USD millones. El resto (<span data-v="resto">—</span>) es costo de mercaderías <span data-v="resto_cmv">—</span>, ingresos netos de impuestos <span data-v="resto_ingresos">—</span> y gastos comerciales y de marketing <span data-v="resto_otros">—</span>. Se usan excedentes frente al presupuesto del estado de resultados; los montos de la hoja de cuellos de botella no se suman aquí.</p>
+</section>
+
+<section id="margenes">
+<div class="two">
+<div><h3>Margen EBITDA por trimestre</h3>
+<div class="legend"><span><i class="l" style="background:var(--mute)"></i>Presupuesto</span><span><i class="l" style="background:var(--ink)"></i>Real</span></div>
+<div class="fig" id="ch-mg" role="img" aria-label="Margen EBITDA presupuestado y real por trimestre"></div></div>
+<div><h3>Fletes y provisión como % de los ingresos</h3>
+<div class="legend"><span><i class="l" style="background:var(--ink)"></i>Fletes, real</span><span><i class="l" style="background:var(--red)"></i>Provisión, real</span><span><i class="l" style="background:var(--mute)"></i>Presupuesto de cada una</span></div>
+<div class="fig" id="ch-pct" role="img" aria-label="Fletes y provisión por inadimplencia como porcentaje de los ingresos"></div></div>
+</div>
+<p class="note">El presupuesto mantenía fletes y provisión casi constantes sobre los ingresos; el real los duplica y triplica hacia el T4.</p>
+</section>
+
+<section id="semaforo">
+<h2>Benchmarks del área operativa</h2>
+<p class="note">Semáforo: verde si cumple la meta; ámbar hasta 1,5 veces la meta (umbral del consultor); rojo por encima. La columna de USD es la estimación de la hoja Cuellos_de_botella_y_costos: mezcla montos totales y excedentes, por eso no se suma con el estado de resultados.</p>
+<div class="scroll"><table><thead><tr><th>Estado</th><th>Indicador</th><th class="n">Meta</th><th class="n">Real</th><th>Unidad</th><th class="n">Veces la meta</th><th class="n">USD al año (hoja 3)</th><th>Qué es ese monto</th></tr></thead><tbody id="t-sem"></tbody></table></div>
+</section>
+
+<section id="anomalias">
+<h2>Anomalías de costos e ingresos</h2>
+<ul class="h">
+<li><b>Fletes:</b> <b data-v="l_fletes_sobrecosto">—</b> sobre el presupuesto; pasan del <b data-v="l_fletes_pct_T1">—</b> al <b data-v="l_fletes_pct_T4">—</b> de los ingresos. Una parte viene de errores de transposición (causa B); el resto no tiene causa demostrada en el kit.<span class="tag">raíz B</span></li>
+<li><b>Cancelaciones:</b> <b data-v="l_cancelaciones_sobrecosto">—</b> sobre el presupuesto; en el T4 son <b data-v="l_cancelaciones_veces_T4">—</b> lo presupuestado. La hoja 3 las atribuye a la homologación de crédito de 48 horas.<span class="tag">raíz A</span></li>
+<li><b>Ingresos B2B:</b> por debajo del presupuesto en el T3 (<b data-v="b2b_var_T3">—</b>) y el T4 (<b data-v="b2b_var_T4">—</b>), mientras el canal D2C lo supera en el año (<b data-v="d2c_var">—</b>). Hipótesis: pedidos perdidos por la lentitud del crédito.<span class="tag">raíz A, hipótesis</span></li>
+<li><b>Reentregas y multas:</b> <b data-v="l_reentregas_sobrecosto">—</b>; en el T4, <b data-v="l_reentregas_veces_T4">—</b> el presupuesto. Datos sin fuente única y pedidos sin validar.<span class="tag">raíz B</span></li>
+<li><b>Gastos administrativos y legados:</b> <b data-v="l_administrativos_sobrecosto">—</b>, concentrados en el segundo semestre: cierre manual entre 3 hojas y el ERP.<span class="tag">raíz B</span></li>
+<li><b>Provisión por inadimplencia:</b> <b data-v="l_provision_sobrecosto">—</b>; del <b data-v="l_provision_pct_T1">—</b> al <b data-v="l_provision_pct_T4">—</b> de los ingresos. Cobranza manual, fuera del flujo del pedido.<span class="tag">cobranza (CU3)</span></li>
+<li><b>Costo de mercaderías:</b> <b data-v="cmv_exc">—</b> sobre el presupuesto; sube del <b data-v="cmv_pct_T1">—</b> al <b data-v="cmv_pct_T4">—</b> de los ingresos. El kit no permite atribuirlo a B, A ni C.<span class="tag">sin causa en el kit</span></li>
+<li><b>Gastos financieros:</b> <b data-v="fin_exc">—</b> sobre el presupuesto (<b data-v="fin_var">—</b>), debajo del EBITDA: no forman parte del hueco. Hipótesis: más capital de trabajo por cobranza lenta.<span class="tag">hipótesis</span></li>
+</ul>
+</section>
+
+<section id="proyeccion">
+<h2>Proyección del próximo T1: EBITDA en rangos</h2>
+<div class="legend"><span><i style="background:var(--mute)"></i>Inercia</span><span><i style="background:var(--red)"></i>Con la intervención (CU2 v1)</span><span><i class="l" style="background:var(--grey)"></i>EBITDA real del T4</span></div>
+<div class="pr" id="ch-proj" aria-label="Rangos de EBITDA proyectado para el próximo T1, en USD millones"></div>
+<div class="scroll"><table><thead><tr><th>Escenario</th><th class="n">Ingresos, mín.</th><th class="n">Ingresos, máx.</th><th class="n">EBITDA, mín.</th><th class="n">EBITDA, máx.</th><th class="n">Margen, mín.</th><th class="n">Margen, máx.</th><th class="n">Aporte de CU2, mín.</th><th class="n">Aporte de CU2, máx.</th></tr></thead><tbody id="t-proy"></tbody></table></div>
+<p class="note">Rangos redondeados a USD 10.000; el aporte de CU2, a USD 1.000.</p>
+<ul class="h">
+<li>Inercia, extremo favorable: los ingresos siguen la tendencia lineal de los cuatro trimestres y cada costo mantiene su peso del T4 sobre los ingresos.</li>
+<li>Inercia, extremo desfavorable: ingresos planos al nivel del T4 y las cinco líneas de sobrecosto siguen la tendencia lineal de su peso; el resto de costos, con su peso del T4.</li>
+<li>Con la intervención: en el T1 solo cuenta el mes 3 (mes 1, panel; mes 2, sombra sin beneficio), con 50 % de adopción (primer mes de la rampa aprobada) y captura del 30 % al 70 % del sobrecosto anual de cancelaciones, en doceavos. CU1, CU3 y CU4 no aportan en el T1.</li>
+<li>Con un solo año de datos no se puede separar crecimiento de estacionalidad: si el T1 es estacionalmente bajo, la tendencia lo sobrestima.</li>
+</ul>
+</section>
+
+<section id="sla">
+<h2>Lo que agregará el panel de SLA</h2>
+<p class="note">Este panel es financiero: el kit no trae sellos de tiempo por etapa. Estos son los KPI por paso del SIPOC; ningún tiempo se estima.</p>
+<div class="scroll"><table><thead><tr><th>Paso</th><th>Etapa</th><th>Dueño</th><th>KPI</th><th>Lo que mide el kit</th><th>Dato que hace falta</th></tr></thead><tbody id="t-sla"></tbody></table></div>
+<p class="note"><b>Para llenarlo:</b> un registro por pedido con su ID y la fecha y hora de entrada y salida de cada paso (correo de financiero@ o formulario, ERP para la NF-e y CD para la salida), más el motivo de cada devolución y de cada flete expreso.</p>
+</section>
+
+<section id="operacion">
+<h2>Cómo se actualiza cada mes</h2>
+<div class="cards">
+<div><b>Opción recomendada: Power Query</b><p>Una carpeta compartida recibe cada mes las exportaciones del ERP (NF-e, boletos, pagos) y las hojas de control de límites, precios y fletes. Power Query las importa desde la carpeta, las anexa, convierte textos a números y unifica nombres en pasos aplicados que se repiten solos con «Actualizar todo». Antes de publicar, las validaciones de la limpieza se corren de nuevo: si un subtotal no cuadra, el panel no se actualiza.</p></div>
+<div><b>Alternativa: conector de Claude</b><p>La tabla consolidada se guarda en Google Drive o en OneDrive/SharePoint y el panel la lee con el conector de Google Workspace o de Microsoft 365, en lugar del archivo fijo de hoy.</p></div>
+<div><b>Quién lo revisa</b><p>El controller (rol propuesto; mientras tanto, el gerente financiero) revisa el cuadre y firma antes de que la CEO lo vea. El núcleo del comité de IA lo revisa en su reunión mensual.</p></div>
+<div><b>Cuándo</b><p>Al cierre de cada mes: hoy, al día 7 hábil; con la conciliación asistida (CU4), al día 2.</p></div>
+</div>
+</section>
+
+<section id="limpieza">
+<h2>Limpieza y validación de los datos</h2>
+<p class="note">Lo que encontró el código al validar el archivo, contrastado después con las inconsistencias ya documentadas. La última columna es la cifra que usa este panel.</p>
+<div class="scroll"><table><thead><tr><th>#</th><th>Hallazgo</th><th>Origen</th><th>Cifra que se usa</th></tr></thead><tbody id="t-hall"></tbody></table></div>
+</section>
+
+<section id="supervision">
+<h2>Supervisión humana del consultor</h2>
+<ul class="h">
+<li>Se mantienen las decisiones de las etapas anteriores: reparto de los USD 960.000 entre reentregas y fletes como base, excedentes frente al presupuesto sin doble conteo, causas raíz en el orden B, A, C y la matriz de alzada (CU2 v1) como intervención prioritaria.</li>
+<li>El consultor exigió que el análisis detectara las inconsistencias por su cuenta antes de compararlas con las ya documentadas; el panel marca cuáles salieron del análisis y cuáles se añadieron.</li>
+<li>La proyección con intervención respeta la hoja de ruta aprobada: sin beneficio en el mes de sombra y nada de los otros tres casos en el T1.</li>
+<li>El borrador de esta etapa se produjo en modo lote; después, el consultor decidió:</li>
+<li>Qué cifra usar en cada inconsistencia: ingresos de la hoja 1, participación recalculada sobre el real, margen bruto de 38,0 % sobre ingresos brutos, inadimplencia con el 3,4 % del kit en el semáforo, cancelaciones del estado de resultados, la hoja de benchmarks sin sumar, los USD 960.000 sin cambio (no reabrir la priorización por USD 10.000), 69,3 % para el canal B2B y el rótulo EBITDA tal como viene, con nota.</li>
+<li>Supuestos de la proyección: programa desde el primer mes del T1, 50 % de adopción en el mes 3, base de CU2 de USD 675.000 aprobada en la priorización, inercia en rangos para ingresos y costos, captura de 30 % y 70 % en los extremos y sin estimación de estacionalidad.</li>
+<li>Prompts: rechazó la versión resumida para el informe; van completos, porque el campo pide los prompts que se corrieron.</li>
+<li>Panel en vivo, para que cada cifra muestre su fórmula y su fuente; esta versión pública en HTML conserva los mismos cálculos con los datos embebidos.</li>
+<li>Umbral ámbar del semáforo en 1,5 veces la meta.</li>
+<li>Corrigió la unidad de inadimplencia del semáforo a «% (base no declarada en el kit)», porque la provisión real equivale al 2,3 % de los ingresos.</li>
+</ul>
+</section>
+
+<section id="trazabilidad">
+<h2>De dónde sale cada cifra</h2>
+<div class="scroll"><table><thead><tr><th>Cifra</th><th>Fuente en el archivo 05 del kit</th></tr></thead><tbody><tr><td>Ingresos, EBITDA y margen por trimestre</td><td>Hoja Resultados_trimestrales, filas 5 y 21 (presupuesto y real)</td></tr><tr><td>Hueco de EBITDA (USD 4,078 M)</td><td>Fila 21: total anual presupuesto − real</td></tr><tr><td>Sobrecosto de las 5 líneas (USD 3,48 M)</td><td>Filas 8, 16, 17, 18 y 19: real − presupuesto, en positivo</td></tr><tr><td>Resto del hueco</td><td>Filas 3, 4, 7 (ingresos netos de impuestos), 11, 12 (costo de mercaderías), 15 y 20</td></tr><tr><td>Fletes y provisión como % de los ingresos</td><td>Filas 16 y 19 divididas por la fila 5, por trimestre</td></tr><tr><td>Semáforo</td><td>Hoja Cuellos_de_botella_y_costos, filas 2 a 6 (textos convertidos a número)</td></tr><tr><td>Proyección del T1</td><td>Fila 5 (tendencia lineal de 4 trimestres) y peso de cada costo; CU2: 675.000 × 30–70 % / 12 × 50 %</td></tr><tr><td>KPI por paso del SIPOC</td><td>Doc 06 (40 min por pedido) y hoja Cuellos_de_botella_y_costos (48 h, 6,8 %, 2,8 %)</td></tr></tbody></table></div>
+<p class="note">Los datos del archivo se extrajeron por código y van embebidos en esta página; todos los cálculos se hacen en el navegador con esas filas.</p>
+</section>
+
+<section id="prompts">
+<h2>Prompts utilizados</h2>
+<h3 style="margin-top:16px">1. Limpieza y validación</h3>
+<div class="prompt"><pre id="p1">ROL: Eres analista financiero senior y auditor de datos. Preparas cifras para que la CEO de Taranis Black (muebles ergonómicos corporativos, operación en Brasil) decida con datos confiables.
+
+DATOS: adjunto 05_Finanzas_Presupuesto_vs_Real.xlsx, con tres hojas: estado de resultados trimestral (presupuesto y real), ingresos por línea de producto, y cuellos de botella con sus benchmarks.
+
+TAREA:
+1. Carga el archivo con código (Python) y describe cada hoja: columnas, tipos de dato y si hay fórmulas o valores fijos.
+2. Normaliza sin cambiar cifras: textos que representan números (porcentajes, montos), etiquetas en un solo idioma y una sola convención de signos.
+3. Valida con código: subtotales y totales, totales anuales frente a la suma de los trimestres, la regla de la columna de variación, las tasas implícitas, y toda cifra que aparezca en más de una hoja (ingresos, márgenes, participaciones, montos de cuellos de botella frente a las líneas del estado de resultados).
+4. Por cada diferencia indica hoja y celda, valor A, valor B, magnitud, explicación posible, qué cifra recomiendas usar y por qué.
+
+RESTRICCIONES:
+- No corrijas ni elijas en silencio: muestra cada inconsistencia y espera mi decisión.
+- No inventes datos. Si algo no se puede verificar con el archivo, dilo.
+- Distingue montos totales de excedentes frente al presupuesto y advierte todo riesgo de doble conteo.
+
+FORMATO: Tabla 1, calidad de datos (problema · hoja y celda · efecto · tratamiento). Tabla 2, inconsistencias entre hojas (cifra · valor A · valor B · diferencia · cifra recomendada · razón). Al final, el código usado.</pre></div>
+<button type="button" data-copy="p1">Copiar prompt</button><span class="ok" id="ok-p1" hidden>Copiado</span>
+<h3 style="margin-top:28px">2. Análisis, panel y proyección</h3>
+<div class="prompt"><pre id="p2">ROL: Eres analista de planificación financiera (FP&amp;A). Construyes un panel para la CEO de Taranis Black.
+
+DATOS: las cifras validadas con el prompt anterior y mis decisiones sobre cada inconsistencia (las pego abajo). Contexto: el flujo B2B pedido–crédito–factura–despacho genera el 70 % de los ingresos. La intervención aprobada es una matriz de alzada con autoaprobación de crédito por reglas: mes 1, panel y línea base; mes 2, prueba en sombra sin beneficio; desde el mes 3 autoaprueba, con 50 % de adopción en su primer mes. En régimen captura del 30 % al 70 % del sobrecosto anual de cancelaciones.
+
+TAREA:
+1. Por trimestre: ingresos y EBITDA real frente a presupuesto, margen EBITDA y cada costo como % de los ingresos.
+2. Descompón el hueco anual de EBITDA (presupuesto − real) en las líneas con sobrecosto y un resto; la suma debe cerrar exacto.
+3. Anomalías de costos e ingresos: magnitud en USD y en veces el presupuesto, si se aceleran por trimestre, y causa probable solo si el archivo la sustenta; si no, márcala como hipótesis.
+4. Semáforo de los benchmarks de la hoja de cuellos de botella: real frente a meta; indica qué montos son totales y cuáles excedentes, y no los sumes con el estado de resultados.
+5. Proyecta el próximo trimestre en rangos con dos escenarios: inercia (extremos: ingresos planos frente a tendencia lineal; costos con su peso del último trimestre frente a la tendencia de su peso) y con la intervención (solo el mes 3). Declara cada supuesto y aclara que un solo año no permite estimar estacionalidad.
+6. Construye un panel interactivo con: real frente a presupuesto por trimestre, cascada del hueco de EBITDA, margen EBITDA trimestral, fletes y provisión como % de los ingresos, semáforo de benchmarks y la proyección. Cada cifra se calcula por código desde el archivo y muestra su fuente.
+
+RESTRICCIONES: cifras solo del archivo o SUPUESTO declarado con su base; rangos, no falsa precisión; sin doble conteo; USD con formato "USD 1,25 millones"; español neutro; no inventes tiempos de proceso que el archivo no trae.
+
+FORMATO: el panel, una tabla de anomalías (anomalía · magnitud · causa probable) y una tabla de trazabilidad (cifra · valor · fuente).</pre></div>
+<button type="button" data-copy="p2">Copiar prompt</button><span class="ok" id="ok-p2" hidden>Copiado</span>
+</section>
+
+<footer>Elaborado por Carlos Hurtado Rojas. Cifras extraídas por código del archivo 05 del kit de datos del challenge; los supuestos se declaran como tales.</footer>
+</div></main>
+
+<script id="data" type="application/json">{"pl": [{"clave": "ingresos_b2b", "linea": "Ingresos B2B corporativo", "fila": 3, "trimestre": "T1", "presupuesto": 7500000, "real": 7750000}, {"clave": "ingresos_b2b", "linea": "Ingresos B2B corporativo", "fila": 3, "trimestre": "T2", "presupuesto": 8000000, "real": 8200000}, {"clave": "ingresos_b2b", "linea": "Ingresos B2B corporativo", "fila": 3, "trimestre": "T3", "presupuesto": 8900000, "real": 8600000}, {"clave": "ingresos_b2b", "linea": "Ingresos B2B corporativo", "fila": 3, "trimestre": "T4", "presupuesto": 9600000, "real": 9050000}, {"clave": "ingresos_d2c", "linea": "Ingresos D2C / e-commerce", "fila": 4, "trimestre": "T1", "presupuesto": 3200000, "real": 3100000}, {"clave": "ingresos_d2c", "linea": "Ingresos D2C / e-commerce", "fila": 4, "trimestre": "T2", "presupuesto": 3400000, "real": 3550000}, {"clave": "ingresos_d2c", "linea": "Ingresos D2C / e-commerce", "fila": 4, "trimestre": "T3", "presupuesto": 3800000, "real": 3900000}, {"clave": "ingresos_d2c", "linea": "Ingresos D2C / e-commerce", "fila": 4, "trimestre": "T4", "presupuesto": 4200000, "real": 4350000}, {"clave": "ingresos", "linea": "Total de ingresos brutos", "fila": 5, "trimestre": "T1", "presupuesto": 10700000, "real": 10850000}, {"clave": "ingresos", "linea": "Total de ingresos brutos", "fila": 5, "trimestre": "T2", "presupuesto": 11400000, "real": 11750000}, {"clave": "ingresos", "linea": "Total de ingresos brutos", "fila": 5, "trimestre": "T3", "presupuesto": 12700000, "real": 12500000}, {"clave": "ingresos", "linea": "Total de ingresos brutos", "fila": 5, "trimestre": "T4", "presupuesto": 13800000, "real": 13400000}, {"clave": "impuestos", "linea": "Impuestos sobre ventas (ICMS, PIS, COFINS)", "fila": 7, "trimestre": "T1", "presupuesto": -1819000, "real": -1844500}, {"clave": "impuestos", "linea": "Impuestos sobre ventas (ICMS, PIS, COFINS)", "fila": 7, "trimestre": "T2", "presupuesto": -1938000, "real": -1997500}, {"clave": "impuestos", "linea": "Impuestos sobre ventas (ICMS, PIS, COFINS)", "fila": 7, "trimestre": "T3", "presupuesto": -2159000, "real": -2125000}, {"clave": "impuestos", "linea": "Impuestos sobre ventas (ICMS, PIS, COFINS)", "fila": 7, "trimestre": "T4", "presupuesto": -2346000, "real": -2278000}, {"clave": "cancelaciones", "linea": "Cancelaciones por retraso logístico", "fila": 8, "trimestre": "T1", "presupuesto": -120000, "real": -195000}, {"clave": "cancelaciones", "linea": "Cancelaciones por retraso logístico", "fila": 8, "trimestre": "T2", "presupuesto": -130000, "real": -240000}, {"clave": "cancelaciones", "linea": "Cancelaciones por retraso logístico", "fila": 8, "trimestre": "T3", "presupuesto": -150000, "real": -380000}, {"clave": "cancelaciones", "linea": "Cancelaciones por retraso logístico", "fila": 8, "trimestre": "T4", "presupuesto": -160000, "real": -420000}, {"clave": "ingresos_netos", "linea": "Ingresos operativos netos", "fila": 9, "trimestre": "T1", "presupuesto": 8761000, "real": 8810500}, {"clave": "ingresos_netos", "linea": "Ingresos operativos netos", "fila": 9, "trimestre": "T2", "presupuesto": 9332000, "real": 9512500}, {"clave": "ingresos_netos", "linea": "Ingresos operativos netos", "fila": 9, "trimestre": "T3", "presupuesto": 10391000, "real": 9995000}, {"clave": "ingresos_netos", "linea": "Ingresos operativos netos", "fila": 9, "trimestre": "T4", "presupuesto": 11294000, "real": 10702000}, {"clave": "materia_prima", "linea": "Materia prima y componentes", "fila": 11, "trimestre": "T1", "presupuesto": -3600000, "real": -3650000}, {"clave": "materia_prima", "linea": "Materia prima y componentes", "fila": 11, "trimestre": "T2", "presupuesto": -3850000, "real": -3920000}, {"clave": "materia_prima", "linea": "Materia prima y componentes", "fila": 11, "trimestre": "T3", "presupuesto": -4250000, "real": -4380000}, {"clave": "materia_prima", "linea": "Materia prima y componentes", "fila": 11, "trimestre": "T4", "presupuesto": -4600000, "real": -4750000}, {"clave": "mano_obra", "linea": "Mano de obra fabril y montaje", "fila": 12, "trimestre": "T1", "presupuesto": -850000, "real": -870000}, {"clave": "mano_obra", "linea": "Mano de obra fabril y montaje", "fila": 12, "trimestre": "T2", "presupuesto": -900000, "real": -920000}, {"clave": "mano_obra", "linea": "Mano de obra fabril y montaje", "fila": 12, "trimestre": "T3", "presupuesto": -980000, "real": -1020000}, {"clave": "mano_obra", "linea": "Mano de obra fabril y montaje", "fila": 12, "trimestre": "T4", "presupuesto": -1050000, "real": -1080000}, {"clave": "lucro_bruto", "linea": "Utilidad bruta", "fila": 13, "trimestre": "T1", "presupuesto": 4311000, "real": 4290500}, {"clave": "lucro_bruto", "linea": "Utilidad bruta", "fila": 13, "trimestre": "T2", "presupuesto": 4582000, "real": 4672500}, {"clave": "lucro_bruto", "linea": "Utilidad bruta", "fila": 13, "trimestre": "T3", "presupuesto": 5161000, "real": 4595000}, {"clave": "lucro_bruto", "linea": "Utilidad bruta", "fila": 13, "trimestre": "T4", "presupuesto": 5644000, "real": 4872000}, {"clave": "comerciales", "linea": "Gastos comerciales (comisiones y SDR)", "fila": 15, "trimestre": "T1", "presupuesto": -680000, "real": -690000}, {"clave": "comerciales", "linea": "Gastos comerciales (comisiones y SDR)", "fila": 15, "trimestre": "T2", "presupuesto": -720000, "real": -735000}, {"clave": "comerciales", "linea": "Gastos comerciales (comisiones y SDR)", "fila": 15, "trimestre": "T3", "presupuesto": -800000, "real": -790000}, {"clave": "comerciales", "linea": "Gastos comerciales (comisiones y SDR)", "fila": 15, "trimestre": "T4", "presupuesto": -860000, "real": -850000}, {"clave": "fletes", "linea": "Fletes y logística del CD", "fila": 16, "trimestre": "T1", "presupuesto": -520000, "real": -680000}, {"clave": "fletes", "linea": "Fletes y logística del CD", "fila": 16, "trimestre": "T2", "presupuesto": -560000, "real": -790000}, {"clave": "fletes", "linea": "Fletes y logística del CD", "fila": 16, "trimestre": "T3", "presupuesto": -620000, "real": -1050000}, {"clave": "fletes", "linea": "Fletes y logística del CD", "fila": 16, "trimestre": "T4", "presupuesto": -680000, "real": -1220000}, {"clave": "reentregas", "linea": "Reentregas y multas por divergencia", "fila": 17, "trimestre": "T1", "presupuesto": -45000, "real": -110000}, {"clave": "reentregas", "linea": "Reentregas y multas por divergencia", "fila": 17, "trimestre": "T2", "presupuesto": -50000, "real": -145000}, {"clave": "reentregas", "linea": "Reentregas y multas por divergencia", "fila": 17, "trimestre": "T3", "presupuesto": -55000, "real": -210000}, {"clave": "reentregas", "linea": "Reentregas y multas por divergencia", "fila": 17, "trimestre": "T4", "presupuesto": -60000, "real": -260000}, {"clave": "administrativos", "linea": "Gastos administrativos y sistemas legados", "fila": 18, "trimestre": "T1", "presupuesto": -410000, "real": -430000}, {"clave": "administrativos", "linea": "Gastos administrativos y sistemas legados", "fila": 18, "trimestre": "T2", "presupuesto": -420000, "real": -460000}, {"clave": "administrativos", "linea": "Gastos administrativos y sistemas legados", "fila": 18, "trimestre": "T3", "presupuesto": -450000, "real": -540000}, {"clave": "administrativos", "linea": "Gastos administrativos y sistemas legados", "fila": 18, "trimestre": "T4", "presupuesto": -480000, "real": -590000}, {"clave": "provision", "linea": "Provisión por inadimplencia B2B", "fila": 19, "trimestre": "T1", "presupuesto": -95000, "real": -160000}, {"clave": "provision", "linea": "Provisión por inadimplencia B2B", "fila": 19, "trimestre": "T2", "presupuesto": -105000, "real": -220000}, {"clave": "provision", "linea": "Provisión por inadimplencia B2B", "fila": 19, "trimestre": "T3", "presupuesto": -115000, "real": -340000}, {"clave": "provision", "linea": "Provisión por inadimplencia B2B", "fila": 19, "trimestre": "T4", "presupuesto": -125000, "real": -390000}, {"clave": "marketing", "linea": "Marketing institucional", "fila": 20, "trimestre": "T1", "presupuesto": -450000, "real": -440000}, {"clave": "marketing", "linea": "Marketing institucional", "fila": 20, "trimestre": "T2", "presupuesto": -480000, "real": -490000}, {"clave": "marketing", "linea": "Marketing institucional", "fila": 20, "trimestre": "T3", "presupuesto": -520000, "real": -510000}, {"clave": "marketing", "linea": "Marketing institucional", "fila": 20, "trimestre": "T4", "presupuesto": -550000, "real": -560000}, {"clave": "ebitda", "linea": "EBITDA", "fila": 21, "trimestre": "T1", "presupuesto": 2111000, "real": 1780500}, {"clave": "ebitda", "linea": "EBITDA", "fila": 21, "trimestre": "T2", "presupuesto": 2247000, "real": 1832500}, {"clave": "ebitda", "linea": "EBITDA", "fila": 21, "trimestre": "T3", "presupuesto": 2601000, "real": 1155000}, {"clave": "ebitda", "linea": "EBITDA", "fila": 21, "trimestre": "T4", "presupuesto": 2889000, "real": 1002000}, {"clave": "financieros", "linea": "Gastos financieros netos", "fila": 22, "trimestre": "T1", "presupuesto": -180000, "real": -210000}, {"clave": "financieros", "linea": "Gastos financieros netos", "fila": 22, "trimestre": "T2", "presupuesto": -190000, "real": -240000}, {"clave": "financieros", "linea": "Gastos financieros netos", "fila": 22, "trimestre": "T3", "presupuesto": -210000, "real": -290000}, {"clave": "financieros", "linea": "Gastos financieros netos", "fila": 22, "trimestre": "T4", "presupuesto": -230000, "real": -320000}, {"clave": "irpj_csll", "linea": "IRPJ y CSLL", "fila": 23, "trimestre": "T1", "presupuesto": -656540, "real": -533970}, {"clave": "irpj_csll", "linea": "IRPJ y CSLL", "fila": 23, "trimestre": "T2", "presupuesto": -699380, "real": -541450}, {"clave": "irpj_csll", "linea": "IRPJ y CSLL", "fila": 23, "trimestre": "T3", "presupuesto": -812940, "real": -294100}, {"clave": "irpj_csll", "linea": "IRPJ y CSLL", "fila": 23, "trimestre": "T4", "presupuesto": -904060, "real": -231880}, {"clave": "lucro_liquido", "linea": "Utilidad neta", "fila": 24, "trimestre": "T1", "presupuesto": 1274460, "real": 1036530}, {"clave": "lucro_liquido", "linea": "Utilidad neta", "fila": 24, "trimestre": "T2", "presupuesto": 1357620, "real": 1051050}, {"clave": "lucro_liquido", "linea": "Utilidad neta", "fila": 24, "trimestre": "T3", "presupuesto": 1578060, "real": 570900}, {"clave": "lucro_liquido", "linea": "Utilidad neta", "fila": 24, "trimestre": "T4", "presupuesto": 1754940, "real": 450120}], "bench": [{"id": "b2", "metrica": "Cierre contable mensual", "fila": 2, "unidad": "días hábiles", "meta": 2.0, "real": 7.0, "meta_txt": "2 días laborables", "real_txt": "7 días laborables", "usd_hoja3": 180000, "tipo_monto": "estimación del área; contenida en administrativos y legados", "linea_pl": "administrativos", "causa_kit": "Conciliación manual de datos entre 3 hojas de cálculo de Excel y ERP legado desconectado"}, {"id": "b3", "metrica": "Homologación de crédito B2B", "fila": 3, "unidad": "horas", "meta": 4.0, "real": 48.0, "meta_txt": "Max. 4 horas", "real_txt": "48 horas", "usd_hoja3": 1250000, "tipo_monto": "monto total de pedidos cancelados; el excedente del estado de resultados es menor", "linea_pl": "cancelaciones", "causa_kit": "Asistente consulta a Serasa manualmente (40 min/pedido) y depende de correo electrónico de gerente"}, {"id": "b4", "metrica": "Reentregas y fletes de emergencia", "fila": 4, "unidad": "% de la facturación", "meta": 0.8, "real": 2.8, "meta_txt": "0.8% de la facturación", "real_txt": "2.8% de la facturación", "usd_hoja3": 960000, "tipo_monto": "excedente (2,0 p.p. de la facturación)", "linea_pl": "fletes y reentregas", "causa_kit": "Error en la transposición manual de datos de la propuesta para el orden de expedición del CD"}, {"id": "b5", "metrica": "Boletos emitidos con divergencia", "fila": 5, "unidad": "% de las NF-e", "meta": 0.5, "real": 6.8, "meta_txt": "< 0.5 % de las NF-e", "real_txt": "6.8% de las NF-e emitidas", "usd_hoja3": 390000, "tipo_monto": "estimación del área; sin línea propia en el estado de resultados", "linea_pl": "—", "causa_kit": "Divergencia entre tabla de precio del comercial y registro desactualizado en el ERP"}, {"id": "b6", "metrica": "Inadimplencia B2B a más de 90 días", "fila": 6, "unidad": "% (base no declarada en el kit)", "meta": 1.2, "real": 3.4, "meta_txt": "1.2 % de la receta", "real_txt": "3.4% de la receta", "usd_hoja3": 1110000, "tipo_monto": "monto total, igual a la provisión real del estado de resultados, que es 2,3 % de los ingresos", "linea_pl": "provision", "causa_kit": "Cobranza no automatizada; regla de recordatorios enviada manualmente por correo electrónico"}], "hallazgos": [{"id": "C1", "tipo": "calidad", "hoja": "las 3 hojas", "celda": "—", "hallazgo": "Sin fórmulas en las 3 hojas: todos los totales son valores fijos; cualquier edición rompe el cuadre sin aviso", "origen": "Detectado por el análisis (nuevo)", "cifra_que_se_usa": "Se recalcula todo con código; los totales se verifican, no se copian"}, {"id": "C2", "tipo": "calidad", "hoja": "Ingresos_por_producto B y G; Cuellos_de_botella B–E", "celda": "—", "hallazgo": "Porcentajes y montos guardados como texto (\"48.5%\", \"USD 180.000 / año en…\"), con punto decimal en % y punto de miles en USD: no se pueden sumar sin convertir", "origen": "Detectado por el análisis (nuevo)", "cifra_que_se_usa": "Se convierten a número al cargar"}, {"id": "C3", "tipo": "calidad", "hoja": "las 3 hojas", "celda": "—", "hallazgo": "Etiquetas mezclan español y portugués (contábil, Mensal, Duvidosos, receta, Faturados, Fretes Expressos, CUSTO, LUCRO, EXERCICIO); se normalizan los nombres para el panel", "origen": "Detectado por el análisis (nuevo)", "cifra_que_se_usa": "Nombres normalizados en español neutro"}, {"id": "C4", "tipo": "calidad", "hoja": "Resultados_trimestrales", "celda": "columnas D, G, J, M, P", "hallazgo": "Variación % = (real − presupuesto) / |presupuesto|: negativo = desfavorable en ingresos y en costos (0 celdas fuera de la regla). El IRPJ/CSLL sale \"+74 %\" en T4 solo porque hubo menos utilidad", "origen": "Detectado por el análisis (nuevo)", "cifra_que_se_usa": "El panel muestra el sobrecosto en positivo"}, {"id": "C5", "tipo": "calidad", "hoja": "Resultados_trimestrales", "celda": "filas 3–4", "hallazgo": "Etiquetas fijas \"(70%)\" y \"(30%)\": el real anual es 69,3 % / 30,7 %", "origen": "Detectado por el análisis; coincide con BASE I6", "cifra_que_se_usa": "B2B = 69,3 % del real"}, {"id": "C6", "tipo": "calidad", "hoja": "Resultados_trimestrales", "celda": "filas 21–23", "hallazgo": "Línea \"EBITDA\" sin depreciación ni amortización: el impuesto se calcula sobre EBITDA − gastos financieros (tasa 34 % en los 8 trimestres)", "origen": "Detectado por el análisis (nuevo)", "cifra_que_se_usa": "Se respeta el rótulo del kit; se aclara en la nota"}, {"id": "C7", "tipo": "consistencia", "hoja": "Ingresos_por_producto vs Resultados_trimestrales", "celda": "D6 vs O5", "hallazgo": "Ingresos reales: 47.400.000 (hoja 2) vs 48.500.000 (hoja 1); presupuesto 48.000.000 vs 48.600.000", "origen": "Detectado por el análisis; coincide con BASE I1", "cifra_que_se_usa": "Hoja 1 (48,5 millones): cuadra en todos sus subtotales y tiene trimestres"}, {"id": "C8", "tipo": "consistencia", "hoja": "Ingresos_por_producto", "celda": "B2:B5", "hallazgo": "Participación declarada (48,5 / 27,5 / 18,0 / 6,0 %) no coincide con el real (50,3 % / 26,7 % / 17,1 % / 5,9 %) ni con el presupuesto (49,0 % / 27,5 % / 17,9 % / 5,6 %)", "origen": "Detectado por el análisis; coincide con BASE I2 (afina: tampoco es el presupuesto)", "cifra_que_se_usa": "Recalculada sobre el real de la hoja 2"}, {"id": "C9", "tipo": "consistencia", "hoja": "Ingresos_por_producto vs Resultados_trimestrales", "celda": "G6 vs fila 13", "hallazgo": "Margen bruto: 43,8 % declarado; 45,0 % ponderado con sus líneas; 38,0 % del estado de resultados sobre ingresos brutos; 47,2 % sobre ingresos netos", "origen": "Detectado por el análisis; coincide con BASE I3", "cifra_que_se_usa": "38,0 % sobre ingresos brutos (misma base que el margen EBITDA)"}, {"id": "C10", "tipo": "consistencia", "hoja": "Cuellos_de_botella vs Resultados_trimestrales", "celda": "E6, C6 vs fila 19", "hallazgo": "Inadimplencia: USD 1.110.000 = provisión real del estado de resultados, pero es 2,3 % de los ingresos totales y 3,3 % de los B2B, no 3,4 %", "origen": "Detectado por el análisis; coincide con BASE I4", "cifra_que_se_usa": "Semáforo con el 3,4 % del kit (cartera a más de 90 días); provisión con el estado de resultados (2,3 %)"}, {"id": "C11", "tipo": "consistencia", "hoja": "Cuellos_de_botella vs Resultados_trimestrales", "celda": "E3 vs fila 8", "hallazgo": "Cancelaciones: USD 1.250.000 en la hoja 3 vs 1.235.000 en el estado de resultados (diferencia 15.000, no explicada); ambos son montos totales; el excedente es 675.000", "origen": "Detectado por el análisis; coincide con BASE I5 (añade la diferencia de 15.000)", "cifra_que_se_usa": "Estado de resultados: 1,235 millones; excedente 675.000"}, {"id": "C12", "tipo": "consistencia", "hoja": "Cuellos_de_botella", "celda": "E4", "hallazgo": "USD 960.000 = 2,0 p.p. × 48.000.000 (presupuesto de la hoja 2); con el real de la hoja 1 serían 970.000; es un excedente, no un total", "origen": "Detectado por el análisis; coincide con BASE I9 (añade la base de 48,0 millones)", "cifra_que_se_usa": "Se mantiene 960.000 (cifra del kit; reparto ya decidido)"}, {"id": "C13", "tipo": "consistencia", "hoja": "Cuellos_de_botella", "celda": "E2:E6", "hallazgo": "La hoja 3 suma USD 3.890.000 mezclando totales (cancelaciones, inadimplencia) y excedentes (fletes); 390.000 de boletos sin línea en el estado de resultados", "origen": "Detectado por el análisis; coincide con BASE I5", "cifra_que_se_usa": "No se suma; el hueco usa los excedentes del estado de resultados"}, {"id": "C14", "tipo": "calidad", "hoja": "Ingresos_por_producto", "celda": "H3", "hallazgo": "Texto de causa mal traducido (\"ponen en práctica la facturación… en 48h\"): se lee como retraso de facturación por crédito", "origen": "Detectado por el análisis (nuevo)", "cifra_que_se_usa": "Se lee como retraso por crédito"}, {"id": "I7", "tipo": "contexto", "hoja": "fuera del .xlsx", "celda": "—", "hallazgo": "Geografía: el video dice \"latinoamericana\"; el kit la ubica en Brasil", "origen": "Añadido desde BASE (no está en la hoja de cálculo)", "cifra_que_se_usa": "Ya decidido en etapas anteriores"}, {"id": "I8", "tipo": "contexto", "hoja": "fuera del .xlsx", "celda": "—", "hallazgo": "Doc 06: \"aprobaciones trimestrales\" frente a aprobación pedido a pedido", "origen": "Añadido desde BASE (no está en la hoja de cálculo)", "cifra_que_se_usa": "Ya decidido en etapas anteriores"}, {"id": "I10", "tipo": "contexto", "hoja": "fuera del .xlsx", "celda": "—", "hallazgo": "Pasos de la narrativa del doc 06 ≠ filas de su SIPOC", "origen": "Añadido desde BASE (no está en la hoja de cálculo)", "cifra_que_se_usa": "Ya decidido en etapas anteriores"}], "sla": [{"paso": "1", "etapa": "Envío del pedido", "dueno": "Vendedor", "kpi": "Pedidos completos a la primera (%)", "valor_kit": "No medido en el kit", "dato_faltante": "Fecha y hora de firma y de llegada a finanzas, por ID de pedido"}, {"paso": "2", "etapa": "Revisión y crédito", "dueno": "Asistente financiero", "kpi": "Minutos por pedido", "valor_kit": "40 min por pedido (doc 06)", "dato_faltante": "Inicio y fin de la revisión por pedido"}, {"paso": "3", "etapa": "Solicitud de aprobación", "dueno": "Asistente financiero", "kpi": "Horas hasta la solicitud", "valor_kit": "No medido en el kit", "dato_faltante": "Hora del correo de solicitud al gerente"}, {"paso": "4", "etapa": "Decisión de crédito", "dueno": "Gerente financiero", "kpi": "Horas de homologación (meta ≤4 h)", "valor_kit": "48 h para los pasos 2 a 4 (hoja 3)", "dato_faltante": "Hora de la decisión y su resultado"}, {"paso": "5", "etapa": "NF-e y boletos", "dueno": "Asistente financiero", "kpi": "Horas hasta la NF-e; % de NF-e divergentes", "valor_kit": "Tiempo no medido; 6,8 % de NF-e divergentes (hoja 3)", "dato_faltante": "Hora de emisión de la NF-e (ERP) y motivo de cada corrección"}, {"paso": "6", "etapa": "Orden y despacho", "dueno": "CD de Joinville", "kpi": "Horas firma → despacho (meta 24 h útiles)", "valor_kit": "Tiempo no medido; 2,8 % de la facturación en reentregas (hoja 3)", "dato_faltante": "Hora de la orden al CD y de salida del camión, y causa de cada flete expreso"}]}</script>
+<script>
+{
+const D = JSON.parse(document.getElementById('data').textContent);
+const PL = D.pl, Q = ['T1', 'T2', 'T3', 'T4'], CINCO = ['fletes', 'cancelaciones', 'provision', 'reentregas', 'administrativos'];
+const g = (k, q, f) => { const r = PL.find((x) => x.clave === k && x.trimestre === q); return r ? Number(r[f]) : NaN; };
+const S = (k, f) => Q.reduce((s, q) => s + g(k, q, f), 0);
+const exc = (k) => -(S(k, 'real') - S(k, 'presupuesto'));
+const dd = (k) => S(k, 'real') - S(k, 'presupuesto');
+// --- formatos (es: coma decimal, punto de miles) ---
+const nf = (x, d) => { const s = Math.abs(x).toFixed(d); let [i, f] = s.split('.'); i = i.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return (x < 0 ? '−' : '') + i + (f ? ',' + f : ''); };
+const sg = (v) => (v < 0 ? '−' : '');
+const F = {
+  usd: (v) => Math.abs(v) >= 1e6 ? sg(v) + 'USD ' + nf(Math.abs(v) / 1e6, 2) + ' M' : sg(v) + 'USD ' + nf(Math.abs(v), 0),
+  usd3: (v) => sg(v) + 'USD ' + nf(Math.abs(v) / 1e6, 3) + ' M',
+  usdm: (v) => sg(v) + 'USD ' + nf(Math.abs(v) / 1e6, 2) + ' M',
+  usdk: (v) => sg(v) + 'USD ' + nf(Math.round(Math.abs(v) / 1000) * 1000, 0),
+  m2: (v) => nf(v / 1e6, 2),
+  mt: (v) => nf(v / 1e6, 3).replace(/0$/, ''),
+  pct: (v) => nf(v * 100, 1) + ' %',
+  pct0: (v) => nf(v * 100, 0) + ' %',
+  spct: (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + nf(Math.abs(v * 100), 1) + ' %',
+  x: (v) => nf(v, 1) + ' veces',
+  num: (v) => (Number.isInteger(v) ? nf(v, 0) : nf(v, 1)),
+  usd0: (v) => nf(v, 0)
+};
+// --- cálculos (los mismos del panel en vivo) ---
+const T = Q.map((q) => { const ib = g('ingresos', q, 'presupuesto'), ir = g('ingresos', q, 'real'), eb = g('ebitda', q, 'presupuesto'), er = g('ebitda', q, 'real');
+  return {trimestre: q, ingresos_ppto: ib, ingresos_real: ir, ebitda_ppto: eb, ebitda_real: er, margen_ppto: eb / ib, margen_real: er / ir,
+    fletes_pct_ppto: -g('fletes', q, 'presupuesto') / ib, fletes_pct_real: -g('fletes', q, 'real') / ir,
+    provision_pct_ppto: -g('provision', q, 'presupuesto') / ib, provision_pct_real: -g('provision', q, 'real') / ir}; });
+const ib = S('ingresos', 'presupuesto'), ir = S('ingresos', 'real'), eb = S('ebitda', 'presupuesto'), er = S('ebitda', 'real');
+const s5 = CINCO.reduce((s, k) => s + exc(k), 0), hueco = eb - er;
+const s2 = CINCO.reduce((s, k) => s + ['T3', 'T4'].reduce((a, q) => a - (g(k, q, 'real') - g(k, q, 'presupuesto')), 0), 0);
+const cmv = (q, f) => -(g('materia_prima', q, f) + g('mano_obra', q, f));
+const v = (k, q) => (g(k, q, 'real') - g(k, q, 'presupuesto')) / g(k, q, 'presupuesto');
+const V = {
+  ingresos_ppto: [ib, 'usd'], ingresos_real: [ir, 'usd'], var_ingresos: [(ir - ib) / ib, 'spct'], ebitda_real: [er, 'usd'],
+  hueco: [hueco, 'usd3'], var_ebitda: [(er - eb) / eb, 'spct'], margen_ppto: [eb / ib, 'pct'], margen_real: [er / ir, 'pct'],
+  sobrecosto5: [s5, 'usd'], pct_hueco: [s5 / hueco, 'pct0'], pct_s2: [s2 / s5, 'pct0'], resto: [hueco - s5, 'usd'],
+  resto_cmv: [dd('materia_prima') + dd('mano_obra'), 'usd'], resto_ingresos: [dd('ingresos_b2b') + dd('ingresos_d2c') + dd('impuestos'), 'usd'],
+  resto_otros: [dd('comerciales') + dd('marketing'), 'usd'],
+  b2b_var_T3: [v('ingresos_b2b', 'T3'), 'spct'], b2b_var_T4: [v('ingresos_b2b', 'T4'), 'spct'],
+  d2c_var: [(S('ingresos_d2c', 'real') - S('ingresos_d2c', 'presupuesto')) / S('ingresos_d2c', 'presupuesto'), 'spct'],
+  cmv_exc: [Q.reduce((s, q) => s + cmv(q, 'real') - cmv(q, 'presupuesto'), 0), 'usd'],
+  cmv_pct_T1: [cmv('T1', 'real') / g('ingresos', 'T1', 'real'), 'pct'], cmv_pct_T4: [cmv('T4', 'real') / g('ingresos', 'T4', 'real'), 'pct'],
+  fin_exc: [exc('financieros'), 'usd'], fin_var: [S('financieros', 'real') / S('financieros', 'presupuesto') - 1, 'spct']
+};
+CINCO.forEach((k) => { V[`l_${k}_sobrecosto`] = [exc(k), 'usd']; V[`l_${k}_veces_T4`] = [g(k, 'T4', 'real') / g(k, 'T4', 'presupuesto'), 'x'];
+  V[`l_${k}_pct_T1`] = [-g(k, 'T1', 'real') / g('ingresos', 'T1', 'real'), 'pct']; V[`l_${k}_pct_T4`] = [-g(k, 'T4', 'real') / g('ingresos', 'T4', 'real'), 'pct']; });
+document.querySelectorAll('[data-v]').forEach((el) => { const x = V[el.dataset.v]; if (x) el.textContent = F[x[1]](x[0]); });
+
+// cascada
+const nombre = (k) => PL.find((r) => r.clave === k).linea;
+const casc = [{e: 'EBITDA presupuestado', v: eb, a: 0, b: eb, t: 'total'}]; let x = eb;
+CINCO.forEach((k) => { const e = dd(k); casc.push({e: nombre(k), v: e, a: x + e, b: x, t: 'linea'}); x += e; });
+casc.push({e: 'Resto (costo de mercaderías y otros)', v: er - x, a: er, b: x, t: 'resto'});
+casc.push({e: 'EBITDA real', v: er, a: 0, b: er, t: 'total'});
+const cw = document.getElementById('ch-casc');
+casc.forEach((c) => { const r = document.createElement('div'); r.className = 'r';
+  const l = document.createElement('div'); l.className = 'lab' + (c.t === 'total' ? ' t' : ''); l.textContent = c.e;
+  const tk = document.createElement('div'); tk.className = 'trk'; const bar = document.createElement('div'); bar.className = 'bar';
+  bar.style.left = (Math.min(c.a, c.b) / eb * 100) + '%'; bar.style.width = Math.max(0.3, Math.abs(c.b - c.a) / eb * 100) + '%';
+  bar.style.background = c.t === 'total' ? 'var(--ink)' : c.t === 'resto' ? 'var(--mute)' : 'var(--red)'; tk.appendChild(bar);
+  const vl = document.createElement('div'); vl.className = 'val'; vl.dataset.c = c.e;
+  vl.textContent = c.t === 'total' ? F.mt(c.v) : (c.v < 0 ? '−' : '+') + F.mt(Math.abs(c.v));
+  r.append(l, tk, vl); cw.appendChild(r); });
+
+// proyección
+const ols = (y) => { const xs = [1, 2, 3, 4], mx = 2.5, my = y.reduce((a, b) => a + b) / 4;
+  const b = xs.reduce((s, xi, i) => s + (xi - mx) * (y[i] - my), 0) / xs.reduce((s, xi) => s + (xi - mx) ** 2, 0); return my - b * mx + b * 5; };
+const ing = Q.map((q) => g('ingresos', q, 'real'));
+const costos = ['impuestos', 'cancelaciones', 'materia_prima', 'mano_obra', 'comerciales', 'fletes', 'reentregas', 'administrativos', 'provision', 'marketing'];
+const peso = (k) => Q.map((q, i) => -g(k, q, 'real') / ing[i]);
+const pT4 = costos.reduce((s, k) => s + peso(k)[3], 0), pTend = costos.reduce((s, k) => s + (CINCO.includes(k) ? ols(peso(k)) : peso(k)[3]), 0);
+const iMax = ols(ing), iMin = ing[3], eMax = iMax * (1 - pT4), eMin = iMin * (1 - pTend);
+const cMin = exc('cancelaciones') * 0.30 / 12 * 0.50, cMax = exc('cancelaciones') * 0.70 / 12 * 0.50;
+const P = [
+  {escenario: 'Inercia', ingresos_min: iMin, ingresos_max: iMax, ebitda_min: eMin, ebitda_max: eMax, margen_min: eMin / iMin, margen_max: eMax / iMax, cu2_min: 0, cu2_max: 0},
+  {escenario: 'Con la intervención (CU2 v1)', ingresos_min: iMin, ingresos_max: iMax, ebitda_min: eMin + cMin, ebitda_max: eMax + cMax,
+    margen_min: (eMin + cMin) / iMin, margen_max: (eMax + cMax) / iMax, cu2_min: Math.round(cMin / 1000) * 1000, cu2_max: Math.round(cMax / 1000) * 1000}];
+const ref = g('ebitda', 'T4', 'real'), top = Math.max(eMax + cMax, ref) * 1.15, pw = document.getElementById('ch-proj');
+P.forEach((p, i) => { const r = document.createElement('div'); r.className = 'r';
+  const l = document.createElement('div'); l.textContent = p.escenario; l.style.fontWeight = '600';
+  const tk = document.createElement('div'); tk.className = 'trk';
+  const bar = document.createElement('div'); bar.className = 'bar'; bar.style.left = (p.ebitda_min / top * 100) + '%';
+  bar.style.width = ((p.ebitda_max - p.ebitda_min) / top * 100) + '%'; bar.style.background = i ? 'var(--red)' : 'var(--mute)';
+  const lo = document.createElement('div'); lo.className = 'lo'; lo.style.left = (p.ebitda_min / top * 100) + '%'; lo.textContent = F.m2(p.ebitda_min);
+  const hi = document.createElement('div'); hi.className = 'hi'; hi.style.left = (p.ebitda_max / top * 100) + '%'; hi.style.transform = 'translateX(-100%)'; hi.textContent = F.m2(p.ebitda_max);
+  const rf = document.createElement('div'); rf.className = 'ref'; rf.style.left = (ref / top * 100) + '%';
+  tk.append(bar, lo, hi, rf);
+  if (!i) { const rl = document.createElement('div'); rl.className = 'reflab'; rl.style.left = (ref / top * 100) + '%'; rl.textContent = 'T4 real ' + F.m2(ref); tk.appendChild(rl); }
+  r.append(l, tk); pw.appendChild(r); });
+
+// tablas
+const fill = (id, rows, cols) => { const tb = document.getElementById(id);
+  rows.forEach((r, ri) => { const tr = document.createElement('tr');
+    cols.forEach(([k, f, cls]) => { const td = document.createElement('td'); if (cls) td.className = cls;
+      if (k === 'estado') { const s = document.createElement('span'); s.className = 'dot';
+        s.style.background = r.estado === 'Verde' ? 'var(--green)' : r.estado === 'Ámbar' ? 'var(--amber)' : 'var(--red)'; td.append(s, document.createTextNode(r.estado)); td.className = 'nw'; }
+      else td.textContent = r[k] == null ? '—' : f ? F[f](r[k]) : String(r[k]);
+      td.dataset.t = id + '|' + ri + '|' + k; tr.appendChild(td); });
+    tb.appendChild(tr); }); };
+const SEM = D.bench.map((b) => { const veces = Number(b.real) / Number(b.meta);
+  return {metrica: b.metrica, meta: Number(b.meta), real: Number(b.real), unidad: b.unidad, veces, estado: veces <= 1 ? 'Verde' : veces <= 1.5 ? 'Ámbar' : 'Rojo', usd_hoja3: Number(b.usd_hoja3), tipo_monto: b.tipo_monto}; });
+fill('t-sem', SEM, [['estado'], ['metrica'], ['meta', 'num', 'n'], ['real', 'num', 'n'], ['unidad'], ['veces', 'x', 'n'], ['usd_hoja3', 'usd0', 'n'], ['tipo_monto']]);
+fill('t-proy', P, [['escenario'], ['ingresos_min', 'usdm', 'n'], ['ingresos_max', 'usdm', 'n'], ['ebitda_min', 'usdm', 'n'], ['ebitda_max', 'usdm', 'n'], ['margen_min', 'pct', 'n'], ['margen_max', 'pct', 'n'], ['cu2_min', 'usdk', 'n'], ['cu2_max', 'usdk', 'n']]);
+fill('t-sla', D.sla, [['paso'], ['etapa'], ['dueno'], ['kpi'], ['valor_kit'], ['dato_faltante']]);
+fill('t-hall', D.hallazgos, [['id', null, 'nw'], ['hallazgo'], ['origen'], ['cifra_que_se_usa']]);
+
+// gráficos SVG (se redibujan al cambiar el ancho)
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const txt = (p, x, y, s, a) => { const t = el('text', Object.assign({x, y}, a || {}), p); t.textContent = s; return t; };
+const tipOf = (box) => { let t = box.querySelector('.tip'); if (!t) { t = document.createElement('div'); t.className = 'tip'; t.hidden = true; box.appendChild(t); } return t; };
+const showTip = (box, t, ev, lines) => { t.replaceChildren(...lines.map((s) => { const d = document.createElement('div'); d.textContent = s; return d; })); t.hidden = false;
+  const b = box.getBoundingClientRect(); let x = ev.clientX - b.left + 12; if (x + t.offsetWidth > b.width) x = Math.max(0, ev.clientX - b.left - t.offsetWidth - 12);
+  t.style.left = x + 'px'; t.style.top = (ev.clientY - b.top + 12) + 'px'; };
+let metrica = 'ingresos';
+const drawQ = () => { const box = document.getElementById('ch-q'), W = box.clientWidth, H = 300, m = metrica; box.replaceChildren(); const t = tipOf(box);
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, height: H}, box); const maxV = Math.max(...T.map((r) => Math.max(r[m + '_ppto'], r[m + '_real']))) * 1.12;
+  const y = (val) => H - 28 - (val / maxV) * (H - 52), bw = W / 4, gap = bw * 0.2, cw = (bw - gap) / 2;
+  el('line', {x1: 0, x2: W, y1: y(0), y2: y(0), stroke: 'currentColor', 'stroke-opacity': .4}, svg);
+  T.forEach((r, i) => { const x0 = i * bw + gap / 2;
+    [['ppto', 'var(--mute)'], ['real', 'var(--ink)']].forEach(([s, c], j) => { const val = r[`${m}_${s}`];
+      el('rect', {x: x0 + j * cw, y: y(val), width: cw - 4, height: y(0) - y(val), style: `fill:${c}`}, svg);
+      if (cw > 46) txt(svg, x0 + j * cw + (cw - 4) / 2, y(val) - 6, F.m2(val), {'text-anchor': 'middle', class: 'v'}); });
+    txt(svg, x0 + cw, H - 8, r.trimestre, {'text-anchor': 'middle'});
+    const hit = el('rect', {x: i * bw, y: 0, width: bw, height: H, fill: 'transparent'}, svg);
+    hit.addEventListener('pointermove', (ev) => showTip(box, t, ev, [r.trimestre + (m === 'ebitda' ? ' · EBITDA' : ' · Ingresos brutos'), 'Presupuesto: ' + F.usd(r[m + '_ppto']), 'Real: ' + F.usd(r[m + '_real']), 'Variación: ' + F.spct((r[m + '_real'] - r[m + '_ppto']) / r[m + '_ppto'])]));
+    hit.addEventListener('pointerleave', () => { t.hidden = true; }); });
+  txt(svg, 0, 12, 'USD millones'); };
+const drawLine = (id, ser) => { const box = document.getElementById(id), W = box.clientWidth, H = 280, ml = 44, mr = 24, mt = 22, mb = 28; box.replaceChildren(); const t = tipOf(box);
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, height: H}, box); const maxV = Math.max(...ser.map((s) => Math.max(...T.map((r) => r[s.k])))) * 1.15;
+  const y = (val) => H - mb - (val / maxV) * (H - mb - mt), x = (i) => ml + 14 + i * (W - ml - 14 - mr) / 3, step = maxV > 0.15 ? 0.05 : 0.02;
+  for (let v0 = 0; v0 <= maxV; v0 += step) { el('line', {x1: ml, x2: W - mr, y1: y(v0), y2: y(v0), stroke: 'currentColor', 'stroke-opacity': .12}, svg); txt(svg, ml - 8, y(v0) + 4, F.pct0(v0), {'text-anchor': 'end'}); }
+  ser.forEach((s) => { el('path', {d: T.map((r, i) => (i ? 'L' : 'M') + x(i) + ' ' + y(r[s.k])).join(' '), fill: 'none', style: `stroke:${s.c}`, 'stroke-width': 2.5}, svg);
+    T.forEach((r, i) => { el('circle', {cx: x(i), cy: y(r[s.k]), r: 3.5, style: `fill:${s.c}`}, svg);
+      if (s.lab) txt(svg, x(i), y(r[s.k]) - 9, F.pct(r[s.k]), {'text-anchor': 'middle', class: 'v'}); }); });
+  T.forEach((r, i) => { txt(svg, x(i), H - 8, r.trimestre, {'text-anchor': 'middle'});
+    const hit = el('rect', {x: x(i) - (W - ml) / 8, y: 0, width: (W - ml) / 4, height: H, fill: 'transparent'}, svg);
+    hit.addEventListener('pointermove', (ev) => showTip(box, t, ev, [r.trimestre, ...ser.map((s) => s.n + ': ' + F.pct(r[s.k]))]));
+    hit.addEventListener('pointerleave', () => { t.hidden = true; }); }); };
+const drawAll = () => { drawQ();
+  drawLine('ch-mg', [{k: 'margen_ppto', c: 'var(--mute)', n: 'Presupuesto'}, {k: 'margen_real', c: 'var(--ink)', n: 'Real', lab: 1}]);
+  drawLine('ch-pct', [{k: 'fletes_pct_ppto', c: 'var(--mute)', n: 'Fletes, presupuesto'}, {k: 'provision_pct_ppto', c: 'var(--mute)', n: 'Provisión, presupuesto'},
+    {k: 'fletes_pct_real', c: 'var(--ink)', n: 'Fletes, real', lab: 1}, {k: 'provision_pct_real', c: 'var(--red)', n: 'Provisión, real', lab: 1}]); };
+drawAll();
+let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(drawAll, 80); }).observe(document.querySelector('main .wrap'));
+document.getElementById('metrica').addEventListener('change', (e) => { metrica = e.target.value; drawQ(); });
+document.querySelectorAll('button[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+  const id = b.dataset.copy, ok = document.getElementById('ok-' + id);
+  try { await navigator.clipboard.writeText(document.getElementById(id).textContent); ok.textContent = 'Copiado'; }
+  catch (e) { ok.textContent = 'Selecciona el texto y copia'; }
+  ok.hidden = false; setTimeout(() => { ok.hidden = true; }, 2200); }));
+window.__V = V; window.__P = P;
+}
+</script>
+<nav class="tbnav-foot" aria-label="Anterior y siguiente"><a href="ishikawa-6m.html"><small>← Anterior · 05</small>Ishikawa 6M</a><a class="ix" href="index.html">Índice</a><a class="nx" href="index.html"><small>Fin del recorrido</small>Volver al índice</a></nav></body>
+</html>

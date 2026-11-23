@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ishikawa 6M — Taranis Black</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: informe de consultoría para una CEO; seco, preciso, sin adornos (misma familia que el AI Canvas de la Etapa 1).
+IDEA: la espina de pescado de un auditor: cada causa del kit lleva una marca que dice a qué raíz pertenece o si es solo un síntoma.
+PICTURE: el diagrama 6M a todo el ancho, con insignias A, B, C y S; debajo, las tres raíces medidas en USD y horas.
+COLOUR and TYPE: blanco, negro, rojo señal #e4002b, un gris; Archivo ancho 112 peso 800 + Archivo.
+LAYOUT: borde izquierdo estricto, regla superior gruesa, diagrama legible en una sola captura.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#0b0b0b,#f2f2f2);--grey:light-dark(#666,#a3a3a3);--line:light-dark(#d6d6d6,#2e2e2e);--soft:light-dark(#f3f3f3,#181818);--red:#e4002b}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,56px) max(4vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2{font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,4.2vw,48px);max-width:26ch}
+h2{font-size:clamp(22px,2.4vw,30px);margin-top:22px}
+.rule{border-top:8px solid var(--ink)}
+.meta{color:var(--grey);font-size:14px;margin:12px 0 0}
+.lede{font-size:17px;max-width:72ch;margin:14px 0 0}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:24px}
+.kpis div{padding:12px 16px 4px 0;border-right:1px solid var(--line)}
+.kpis div:last-child{border-right:0}
+.kpis b{display:block;font-stretch:112%;font-weight:800;font-size:clamp(20px,2.3vw,28px);white-space:nowrap}
+.kpis b.r{color:var(--red)}
+.kpis span{font-size:14px;color:var(--grey)}
+figure{margin:22px 0 0}
+.scroll{overflow-x:auto}
+figure svg{width:100%;min-width:900px;height:auto;display:block;color:var(--ink)}
+figcaption{font-size:13px;color:var(--grey);margin-top:8px;max-width:90ch}
+.bg{fill:var(--bg)}.sg{fill:var(--grey)}.sgs{stroke:var(--grey)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:12px;font-size:14px}
+.legend span{display:flex;align-items:center;gap:8px}
+.bd{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:800;flex:none}
+.bA{background:var(--red);color:#fff}.bB{background:var(--ink);color:var(--bg)}.bC{border:2px solid var(--ink)}.bS{border:2px dashed var(--grey);color:var(--grey)}
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;border-bottom:2px solid var(--ink)}
+td.n{text-align:right;white-space:nowrap}
+.rank{margin-top:18px}
+.row{display:grid;grid-template-columns:minmax(0,17rem) minmax(0,1fr) minmax(0,15rem);gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.row h3{margin:0;font-size:17px;font-stretch:100%;font-weight:800;display:flex;gap:10px;align-items:center}
+.row h3 small{font-weight:400;color:var(--grey);font-size:13px}
+.track{height:26px;background:var(--soft)}
+.fill{height:100%;display:flex;align-items:center;padding-left:8px;font-size:13px;font-weight:700;white-space:nowrap}
+.fB{background:var(--ink);color:var(--bg)}.fA{background:var(--red);color:#fff}.fC{background:transparent;color:var(--grey);font-weight:400}
+.row p{margin:0;font-size:14px}
+.note{font-size:13px;color:var(--grey);margin:10px 0 0;max-width:90ch}
+ul.h{margin:12px 0 0;padding-left:20px;max-width:86ch}
+ul.h li{margin:5px 0}
+.prompt{margin-top:16px;background:var(--soft);border-left:6px solid var(--ink)}
+.prompt pre{margin:0;padding:18px;white-space:pre-wrap;font:14px/1.5 Archivo,system-ui,sans-serif;max-height:420px;overflow:auto}
+button{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 18px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-top:12px}
+button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+footer{color:var(--grey);font-size:13px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis div:nth-child(2){border-right:0}.row{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0}.stack td::before{content:attr(data-l);font-weight:700;color:var(--grey);flex:0 0 32%}}
+@media(prefers-reduced-motion:no-preference){.fill{animation:grow .9s ease-out both}@keyframes grow{from{transform:scaleX(0);transform-origin:left}}}
+</style>
+<style id="tbnav-css">
+.tbnav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px);font:600 13px/1.3 Archivo,system-ui,sans-serif;color:var(--grey);border-bottom:1px solid var(--line);background:var(--bg)}
+.tbnav a{color:var(--ink);text-decoration:none}.tbnav a:hover{color:var(--red)}
+.tbnav .pos{font-stretch:112%;font-weight:800;color:var(--red)}
+.tbnav-foot{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:22px max(5vw,16px) 40px;border-top:3px solid var(--ink);margin-top:8px;font:600 15px/1.3 Archivo,system-ui,sans-serif}
+.tbnav-foot a{color:var(--ink);text-decoration:none}.tbnav-foot a:hover{color:var(--red)}
+.tbnav-foot small{display:block;color:var(--grey);font-size:12px;font-weight:600}
+.tbnav-foot .nx{text-align:right}.tbnav-foot .ix{text-align:center;color:var(--red)}
+@media print{.tbnav,.tbnav-foot{display:none}}
+</style></head>
+<body><nav class="tbnav" aria-label="Navegación de evidencias"><a href="index.html">← Taranis Black · Evidencias</a><span><span class="pos">05 / 06</span> · Ishikawa 6M · R4 · Etapa 1</span><span><a href="sipoc-as-is-to-be.html">← Anterior</a> · <a href="panel-financiero.html">Siguiente →</a></span></nav>
+<header class="band rule"><div class="wrap">
+<h1>Tres raíces explican el retraso: datos sin fuente única, crédito sin reglas y un flujo sin reloj</h1>
+<p class="meta">Diagrama de Ishikawa 6M · «Aprobación de pedidos, facturación y despacho» · Taranis Black · Ruta 4, Etapa 1 · Carlos Hurtado Rojas · noviembre de 2026</p>
+<div class="kpis">
+<div><b>USD 1,22 M</b><span>raíz B · datos sin fuente única (35 % del sobrecosto)</span></div>
+<div><b class="r">USD 675.000</b><span>raíz A · crédito sin reglas; 44 h de espera sobre la meta</span></div>
+<div><b>3 días</b><span>raíz C · tramo del ciclo que nadie mide</span></div>
+<div><b>54 %</b><span>de los USD 3,48 M de sobrecosto, explicado por B y A</span></div>
+</div>
+
+<figure>
+<div class="scroll">
+<svg viewBox="0 0 1240 590" role="img" aria-label="Diagrama de Ishikawa con seis espinas: Método, Máquina, Mano de obra, Material, Medición y Medio ambiente. Cada causa lleva una insignia: A crédito sin reglas, B datos sin fuente única, C flujo sin dueño ni reloj, S síntoma.">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<g font-family="Archivo,system-ui,sans-serif" fill="currentColor" id="fish"></g>
+</svg>
+</div>
+<figcaption>Las 17 causas observadas en el kit (doc 06, sección 4), clasificadas tras el análisis "por qué → por qué" de la tabla de abajo. Las raíces B y C aparecen en tres espinas cada una: por eso se jerarquiza por raíz y no por espina.</figcaption>
+<div class="legend">
+<span><i class="bd bA">A</i>Crédito sin reglas</span>
+<span><i class="bd bB">B</i>Datos sin fuente única y captura sin validación</span>
+<span><i class="bd bC">C</i>Flujo sin dueño ni reloj</span>
+<span><i class="bd bS">S</i>Síntoma: consecuencia, no causa</span>
+</div>
+</figure>
+</div></header>
+
+<main class="band" style="padding-top:0"><div class="wrap">
+
+<section class="rule">
+<h2>Las tres causas principales, medidas</h2>
+<p class="lede" style="margin-top:10px">Se ordenan por el sobrecosto real frente al presupuesto que explican (kit 05, sin doble conteo) y por las horas que consumen. B lidera en toda lectura; A es el mayor cuello de tiempo; C no tiene línea propia en el estado de resultados, pero es la que impide ver las otras dos.</p>
+<div class="rank">
+<div class="row"><h3><i class="bd bB">B</i>Datos sin fuente única<small>1.º</small></h3><div class="track"><div class="fill fB" style="width:100%">USD 1,22 M</div></div><p>Reentregas 515.000 · fletes 445.000 · administrativos y legados 260.000 · 116 h al mes liberables</p></div>
+<div class="row"><h3><i class="bd bA">A</i>Crédito sin reglas<small>2.º</small></h3><div class="track"><div class="fill fA" style="width:55.3%">USD 675.000</div></div><p>Cancelaciones por retraso, cargadas al crédito: la hoja Cuellos_de_botella atribuye los pedidos cancelados a la homologación de 48 h · 44 h de espera sobre la meta · 49 h al mes liberables</p></div>
+<div class="row"><h3><i class="bd bC">C</i>Flujo sin dueño ni reloj<small>3.º</small></h3><div class="track"><div class="fill fC">sin línea propia en el estado de resultados</div></div><p>3 de los más de 5 días del ciclo sin medir; 3 correos por pedido</p></div>
+</div>
+<table class="stack">
+<thead><tr><th>Sensibilidad de la raíz B</th><th>Lectura B (base)</th><th>Lectura A (techo)</th></tr></thead>
+<tbody>
+<tr><td data-l="Alcance">Con el cierre (administrativos y legados)</td><td data-l="Lectura B" class="n">USD 1,22 M</td><td data-l="Lectura A" class="n">USD 1,735 M</td></tr>
+<tr><td data-l="Alcance">Sin el cierre</td><td data-l="Lectura B" class="n">USD 960.000</td><td data-l="Lectura A" class="n">USD 1,475 M</td></tr>
+</tbody></table>
+<p class="note">En las cuatro combinaciones B supera a A (USD 675.000). Lectura B, decidida en la Etapa 2: los USD 960.000 de "reentregas y fletes de emergencia" (hoja Cuellos_de_botella) cubren los USD 515.000 de reentregas y USD 445.000 de fletes; lectura A: están solo en fletes. Cuadre de los USD 3,48 M: B 1,22 M + A 0,675 M + provisión por inadimplencia 0,67 M (nace en la cobranza, fuera de este flujo) + 0,915 M de fletes sin causa demostrada. El panel de SLA mostrará si esos fletes son expresos para recuperar fechas; si lo son, pasan a la raíz C. Horas liberables: Etapa 2 (A = CU2; B = CU1 + CU4), con el supuesto de 20 min de crédito y 20 min de copia de datos en los 40 min por pedido.</p>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Por qué → por qué, causa por causa</h2>
+<table class="stack"><thead><tr><th>Espina</th><th>Causa observada (kit)</th><th>¿Por qué?</th><th>¿Por qué?</th><th>Clasificación</th></tr></thead><tbody id="why"></tbody></table>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Supervisión humana del consultor</h2>
+<p class="lede" style="margin-top:10px">El borrador se produjo en modo lote: la IA propuso cada decisión con su recomendación y sus alternativas calculadas, y el consultor decidió.</p>
+<ul class="h">
+<li><b>Orden de las causas: B, A, C, por USD.</b> Los datos le ganan a la hipótesis inicial, que ponía primero la matriz de alzada; A sigue siendo el mayor cuello de tiempo.</li>
+<li><b>Intervención prioritaria: matriz de alzada (CU2 v1).</b> Es la restricción del flujo y no toca el ERP; la causa B se ataca en paralelo sin IA.</li>
+<li><b>Lectura de horas: 24 horas útiles = 1 día hábil.</b> Es el uso de "horas úteis" y la única lectura coherente con el ciclo de más de 5 días.</li>
+<li><b>Formulario de pedido con campos obligatorios, sin IA, en los meses 2–3.</b> Su costo queda dentro de la inversión de CU1 y su beneficio dentro de la captura de CU1: no se suma.</li>
+<li><b>Ishikawa en el informe como captura</b>, con el detalle en esta página.</li>
+<li><b>Criterio para salir de la sombra:</b> de los pedidos que las reglas autoaprobarían, el gerente aprobó al menos el 95 % y no rechazó ninguno por riesgo de crédito. El consultor descartó una concordancia global, que engaña porque casi todo se aprueba.</li>
+<li>Se mantienen las reglas de las etapas anteriores: lectura B de los USD 960.000 (decidida en la Etapa 2) y ningún monto de la hoja de cuellos de botella se suma al estado de resultados. La provisión por inadimplencia queda fuera de este flujo y los fletes sin causa no se asignan sin evidencia.</li>
+</ul>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Prompt utilizado</h2>
+<div class="prompt"><pre id="p">ROL: Eres consultor senior de mejora de procesos (Lean, análisis de causa raíz) e IA aplicada a finanzas. Asesoras a la CEO de Taranis Black (muebles ergonómicos corporativos; operación en Brasil).
+
+PROBLEMA CENTRAL (doc 06 del kit): más de 5 días útiles de la firma de la propuesta al despacho (meta: 24 h útiles) y cierre contable en 7 días (meta: 2), con retrabajo en NF-e, boletos y entregas.
+
+EVIDENCIA 6M (doc 06, sección 4):
+- Método: sin procedimiento estándar; flujo por correo informal; sin matriz de alzada (todo pedido exige aprobación de la gerencia); reglas CIF/FOB no verificadas antes del cierre.
+- Máquina: ERP legado sin API; sin OCR ni IA para leer el PDF; 3 hojas locales no sincronizadas (crédito, precios, fletes).
+- Mano de obra: equipo financiero saturado de digitación; desmotivación y desgaste en los cierres; liderazgo que centraliza aprobaciones y retiene el flujo.
+- Material: propuestas con campos incompletos; códigos de producto de la propuesta distintos del ERP; dirección del cliente desactualizada.
+- Medición: sin SLA por etapa; la dirección descubre los retrasos a fin de mes; pipeline invisible por departamento.
+- Medio ambiente: fricción entre São Paulo (comercial) y Joinville (CD); cultura de "apagar incendios".
+
+DATOS (kit 05, USD al año, real menos presupuesto): reentregas y multas +515.000; fletes y logística +1.360.000; cancelaciones por retraso +675.000; provisión por inadimplencia +670.000; administrativos y sistemas legados +260.000; total +3.480.000. Hoja Cuellos_de_botella: crédito 48 h vs ≤4 h (causa: Serasa manual y correo del gerente); reentregas y fletes de emergencia USD 960.000 (causa: transposición manual); boletos 6,8 % vs &lt;0,5 % (causa: tabla de precios comercial ≠ ERP); cierre 7 días (causa: conciliación manual entre 3 hojas y el ERP).
+DECISIÓN PREVIA DEL CONSULTOR: los USD 960.000 cubren reentregas (515.000) y parte de los fletes (445.000); el resto de los fletes no tiene causa demostrada.
+HIPÓTESIS A CONTRASTAR: (1) falta de matriz de alzada; (2) transcripción manual sin validación; (3) sin SLA visibles.
+
+TAREA:
+1. Diagrama de Ishikawa 6M con las causas del kit.
+2. Para cada causa, dos "¿por qué?" hasta su raíz. Marca si es causa raíz o síntoma (consecuencia de otra causa o solución ausente).
+3. Agrupa las raíces y jerarquiza las 3 principales por el sobrecosto que explican (excedentes del estado de resultados, sin doble conteo) y por horas. Muestra cómo cambia la jerarquía con la otra lectura de los USD 960.000.
+4. Contrasta con las hipótesis: si los datos dicen otra cosa, ganan los datos y lo dices.
+
+RESTRICCIONES:
+- Usa excedentes frente al presupuesto, no montos totales. Cada línea del estado de resultados se asigna a una sola raíz; lo que no tenga evidencia queda sin asignar.
+- No sumes montos de la hoja de cuellos de botella con los del estado de resultados.
+- Toda cifra se rastrea a DATOS o es un SUPUESTO declarado. Si el kit no mide algo, dilo.
+- Español neutro profesional; la CEO debe entenderlo en 2 minutos.
+
+FORMATO: diagrama legible en una captura, con insignias por causa (raíz A, B, C o síntoma), tabla "por qué → por qué" y barra de las 3 raíces en USD.</pre></div>
+<button type="button" id="cp">Copiar prompt</button>
+</section>
+
+<footer style="margin-top:48px;border-top:1px solid var(--line);padding-top:14px">Elaborado por Carlos Hurtado Rojas. Fuentes: documento 06 del kit (sección 4, evidencia 6M) y archivo 05, hojas Resultados_trimestrales y Cuellos_de_botella_y_costos. Cálculos hechos con código; los supuestos se declaran como tales.</footer>
+</div></main>
+<script>
+{
+const C=[
+ ["Método","Sin matriz de alzada","A","Todo pedido, incluso USD 8.000 de un cliente antiguo, sube al gerente","La política de crédito vive en su criterio y en una hoja local, no en reglas escritas"],
+ ["Método","Flujo por correo, sin POP","C","No hay cola única: el pedido avanza solo cuando alguien abre un correo","Ninguna etapa tiene dueño ni tiempo máximo"],
+ ["Método","CIF/FOB sin verificar","B","La condición de flete se revisa recién en el CD","No es un campo obligatorio validado en la propuesta"],
+ ["Máquina","ERP legado sin API","B","Cada consulta y cada NF-e se hacen a mano","Los datos maestros no tienen una fuente única que pueda alimentar al ERP"],
+ ["Máquina","3 hojas no sincronizadas","B","Crédito, precios y fletes se mantienen por separado","Nadie es dueño de cada dato maestro; cada área corrige su copia"],
+ ["Máquina","PDF sin lectura automática","S","La propuesta llega como documento libre, no como datos","Es una solución ausente; la raíz es B"],
+ ["Mano de obra","Gerente centraliza","A","Revisa cada pedido y se convierte en cola","No tiene reglas para delegar los de bajo riesgo"],
+ ["Mano de obra","Equipo saturado","S","Copia los mismos datos dos y tres veces (hoja, correo, NF-e)","Consecuencia de B y A"],
+ ["Mano de obra","Desgaste en los cierres","S","El cierre concilia a mano 3 hojas y el ERP durante 7 días","Consecuencia de B"],
+ ["Material","Campos incompletos","B","El vendedor envía un PDF libre","No hay validación en el origen del pedido"],
+ ["Material","Códigos ≠ ERP","B","La tabla de precios comercial difiere del registro del ERP (kit)","No hay una tabla de precios única con dueño"],
+ ["Material","Dirección desactualizada","B","El registro del cliente no se valida al vender","Mismo origen: sin fuente única ni validación en origen"],
+ ["Medición","Sin SLA por etapa","C","El flujo no deja sellos de tiempo","Vive en el correo; el kit solo mide el tramo del crédito"],
+ ["Medición","Retrasos vistos a fin de mes","S","No hay alertas durante el mes","Consecuencia de C"],
+ ["Medición","Pipeline invisible","C","No existe un estado compartido del pedido","No hay cola única con dueño"],
+ ["Medio ambiente","Fricción São Paulo–Joinville","C","La orden llega por correo, sin aviso previo","El CD no ve los pedidos que vienen; la condición de flete llega sin validar (B)"],
+ ["Medio ambiente","Apagar incendios","S","Sin indicadores solo se ve la urgencia","Consecuencia de C"]
+];
+const LB={A:"Raíz A · crédito sin reglas",B:"Raíz B · datos sin fuente única",C:"Raíz C · flujo sin dueño ni reloj",S:"Síntoma"};
+const L=["Espina","Causa","¿Por qué?","¿Por qué?","Clasificación"];
+document.getElementById("why").innerHTML=C.map(r=>`<tr><td data-l="${L[0]}">${r[0]}</td><td data-l="${L[1]}"><b>${r[1]}</b></td><td data-l="${L[2]}">${r[3]}</td><td data-l="${L[3]}">${r[4]}</td><td data-l="${L[4]}"><span style="display:inline-flex;gap:8px;align-items:center"><i class="bd b${r[2]}">${r[2]}</i>${LB[r[2]]}</span></td></tr>`).join("");
+// Fishbone
+const sp=300,top=[["Método",340],["Máquina",660],["Mano de obra",980]],bot=[["Material",340],["Medición",660],["Medio ambiente",980]];
+const ty=[112,170,228],by=[372,430,488];
+const badge=(x,y,k)=>{
+ if(k==="A")return `<circle cx="${x}" cy="${y}" r="10" fill="#e4002b"/><text x="${x}" y="${y+4}" font-size="12" font-weight="800" text-anchor="middle" fill="#fff">A</text>`;
+ if(k==="B")return `<circle cx="${x}" cy="${y}" r="10" fill="currentColor"/><text x="${x}" y="${y+4}" font-size="12" font-weight="800" text-anchor="middle" class="bg">B</text>`;
+ if(k==="C")return `<circle cx="${x}" cy="${y}" r="9" class="bg" stroke="currentColor" stroke-width="2"/><text x="${x}" y="${y+4}" font-size="12" font-weight="800" text-anchor="middle">C</text>`;
+ return `<circle cx="${x}" cy="${y}" r="9" class="bg sgs" stroke-width="1.6" stroke-dasharray="3 2"/><text x="${x}" y="${y+4}" font-size="12" font-weight="800" text-anchor="middle" class="sg">S</text>`;
+};
+let g=`<line x1="20" y1="${sp}" x2="1000" y2="${sp}" stroke="currentColor" stroke-width="4" marker-end="url(#ar)"/>`;
+g+=`<rect x="1010" y="214" width="228" height="172" fill="#e4002b"/>`;
+["Ciclo de más de","5 días útiles","(meta: 24 h)","y cierre en 7 días","(meta: 2)"].forEach((t,i)=>{g+=`<text x="1024" y="${246+i*26}" font-size="${i===1||i===3?19:15}" font-weight="${i===1||i===3?800:400}" fill="#fff">${t}</text>`});
+g+=`<text x="1024" y="374" font-size="12" fill="#fff">+ retrabajo en NF-e y entregas</text>`;
+const draw=(bones,ys,up)=>bones.forEach(([name,x])=>{
+ const ex=x-130,ey=up?70:530;
+ g+=`<line x1="${x}" y1="${sp}" x2="${ex}" y2="${ey}" stroke="currentColor" stroke-width="2.5"/>`;
+ g+=`<text x="${ex}" y="${up?56:556}" font-size="16" font-weight="800" text-anchor="middle">${name}</text>`;
+ C.filter(c=>c[0]===name).forEach((c,i)=>{
+  const y=ys[i],bx=x-130*Math.abs(sp-y)/230;
+  g+=`<line x1="${bx-24}" y1="${y}" x2="${bx}" y2="${y}" stroke="currentColor" stroke-width="1.2"/>`+badge(bx-34,y,c[2]);
+  g+=`<text x="${bx-50}" y="${y+4}" font-size="13" text-anchor="end"${c[2]==="S"?' class="sg"':''}>${c[1]}</text>`;
+ });
+});
+draw(top,ty,true);draw(bot,by,false);
+document.getElementById("fish").innerHTML=g;
+const b=document.getElementById("cp");
+b.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(document.getElementById("p").innerText);b.textContent="Copiado";}catch(e){b.textContent="Selecciona el texto y copia";}setTimeout(()=>{b.textContent="Copiar prompt";},2200);});
+}
+</script>
+<nav class="tbnav-foot" aria-label="Anterior y siguiente"><a href="sipoc-as-is-to-be.html"><small>← Anterior · 04</small>SIPOC y As-Is → To-Be</a><a class="ix" href="index.html">Índice</a><a class="nx" href="panel-financiero.html"><small>Siguiente · 06 →</small>Panel financiero</a></nav></body>
+</html>

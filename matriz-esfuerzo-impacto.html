@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matriz Esfuerzo × Impacto — Taranis Black</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: informe de consultoría para una CEO; seco, preciso, sin adornos (continúa el AI Canvas de S1).
+IDEA: la misma hoja de horarios suiza: cada iniciativa es una parada con su hora de salida.
+PICTURE: la matriz esfuerzo × impacto con burbujas por beneficio, y debajo la hoja de ruta de 12 meses.
+COLOUR and TYPE: blanco, negro, rojo señal #e4002b, un gris; Archivo ancho 112 peso 800 + Archivo.
+LAYOUT: borde izquierdo estricto, regla superior gruesa, tablas a todo el ancho.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#0b0b0b,#f2f2f2);--grey:light-dark(#666,#a3a3a3);--line:light-dark(#d6d6d6,#2e2e2e);--soft:light-dark(#f3f3f3,#181818);--red:#e4002b}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}.wrap{max-width:1240px;margin:0 auto}
+h1,h2{font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,4.6vw,52px);max-width:24ch}h2{font-size:clamp(24px,2.6vw,32px);margin-top:22px}
+.rule{border-top:8px solid var(--ink)}.meta{color:var(--grey);font-size:14px;margin:14px 0 0}
+.lede{font-size:17px;max-width:70ch;margin:18px 0 0}
+.draft{display:inline-block;border:1.5px solid var(--red);color:var(--red);font-weight:700;font-size:13px;padding:2px 10px;margin-top:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:24px}
+.kpis div{padding:14px 16px 4px 0;border-right:1px solid var(--line)}.kpis div:last-child{border-right:0}
+.kpis b{display:block;font-stretch:112%;font-weight:800;font-size:clamp(22px,2.4vw,30px);white-space:nowrap}.kpis b.r{color:var(--red)}
+.kpis span{font-size:14px;color:var(--grey)}
+.ctl{display:flex;flex-wrap:wrap;gap:18px;margin-top:26px}
+.seg{display:flex;flex-wrap:wrap;gap:0;align-items:center}.seg>span{font-size:13px;font-weight:700;margin-right:10px}
+.seg button{font:600 14px Archivo,system-ui,sans-serif;min-height:44px;padding:0 14px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-left:-2px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.mx{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;margin-top:22px;align-items:start}
+.fig{position:relative;min-height:460px;border-top:3px solid var(--ink)}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.side p{margin:0 0 12px;font-size:15px;max-width:60ch}.side b{font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:15px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;border-bottom:2px solid var(--ink)}td.n,th.n{text-align:right;white-space:nowrap}
+tr.tot td{font-weight:700;border-top:2px solid var(--ink)}
+.gantt{margin-top:16px;border-top:3px solid var(--ink)}
+.g{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.g .lab{font-size:15px}.g .lab small{display:block;color:var(--grey);font-size:13px}
+.trk{position:relative;height:24px;background:var(--soft)}
+.blk{position:absolute;top:0;height:100%;background:var(--ink)}.blk.live{background:var(--red)}
+.months{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:14px;font-size:12px;color:var(--grey);padding-top:6px}
+.months div:last-child{display:grid;grid-template-columns:repeat(12,minmax(0,1fr))}
+.note{font-size:13px;color:var(--grey);margin:10px 0 0;max-width:86ch}
+.prompt{margin-top:16px;background:var(--soft);border-left:6px solid var(--ink)}
+.prompt pre{margin:0;padding:18px;white-space:pre-wrap;font:14px/1.5 Archivo,system-ui,sans-serif;max-height:420px;overflow:auto}
+.cp{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 18px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-top:12px}
+ul.h{margin:12px 0 0;padding-left:20px;max-width:86ch}ul.h li{margin:5px 0}
+footer{color:var(--grey);font-size:13px}
+.scroll{overflow-x:auto}
+@media(max-width:900px){.mx{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis div:nth-child(2){border-right:0}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;text-align:right}.stack td::before{content:attr(data-l);font-weight:700;color:var(--grey);text-align:left}
+.g,.months{grid-template-columns:minmax(0,1fr)}.months div:first-child{display:none}.fig{min-height:340px}}
+</style><style id="tbnav-css">
+.tbnav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px);font:600 13px/1.3 Archivo,system-ui,sans-serif;color:var(--grey);border-bottom:1px solid var(--line);background:var(--bg)}
+.tbnav a{color:var(--ink);text-decoration:none}.tbnav a:hover{color:var(--red)}
+.tbnav .pos{font-stretch:112%;font-weight:800;color:var(--red)}
+.tbnav-foot{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:22px max(5vw,16px) 40px;border-top:3px solid var(--ink);margin-top:8px;font:600 15px/1.3 Archivo,system-ui,sans-serif}
+.tbnav-foot a{color:var(--ink);text-decoration:none}.tbnav-foot a:hover{color:var(--red)}
+.tbnav-foot small{display:block;color:var(--grey);font-size:12px;font-weight:600}
+.tbnav-foot .nx{text-align:right}.tbnav-foot .ix{text-align:center;color:var(--red)}
+@media print{.tbnav,.tbnav-foot{display:none}}
+</style></head>
+<body><nav class="tbnav" aria-label="Navegación de evidencias"><a href="index.html">← Taranis Black · Evidencias</a><span><span class="pos">02 / 06</span> · Matriz Esfuerzo × Impacto · R0 · Etapa 2</span><span><a href="ai-canvas.html">← Anterior</a> · <a href="politica-ia-responsable.html">Siguiente →</a></span></nav>
+<header class="band rule"><div class="wrap">
+<h1>La matriz de alzada va primero: el mayor retorno con el menor esfuerzo</h1>
+<p class="meta">Matriz Esfuerzo × Impacto y métricas · Taranis Black · Ruta 0, Etapa 2 · Challenge ONE AI for Business G11 · Carlos Hurtado Rojas · noviembre de 2026</p>
+<p class="lede">Cuatro casos de IA y un panel de medición, ordenados por esfuerzo y por el sobrecosto real que atacan en el estado de resultados. Solo una parte de cada sobrecosto se da por recuperable: el escenario bajo es la cifra de compromiso y las metas del kit son referencia, no promesa.</p>
+<div class="kpis">
+<div><b class="r" id="k1">—</b><span id="k1s">compromiso anual en régimen (escenario bajo)</span></div>
+<div><b id="k2">—</b><span id="k2s">beneficio anual en régimen</span></div>
+<div><b id="k3">—</b><span id="k3s">beneficio del año calendario 1</span></div>
+<div><b id="k4">—</b><span id="k4s">ROI a 12 meses desde la puesta en marcha</span></div>
+</div>
+<div class="ctl">
+<div class="seg" role="group" aria-label="Lectura de los USD 960.000"><span>Lectura de los USD 960.000</span><button id="lB" aria-pressed="true">B · base</button><button id="lA" aria-pressed="false">A · techo si contabilidad confirma</button></div>
+<div class="seg" role="group" aria-label="Escenario"><span>Escenario</span><button data-e="bajo" aria-pressed="false">Bajo</button><button data-e="base" aria-pressed="true">Base</button><button data-e="alto" aria-pressed="false">Alto</button></div>
+<div class="seg" role="group" aria-label="Inversión"><span>Inversión</span><button id="iB" aria-pressed="true">Base</button><button id="iC" aria-pressed="false">+30 % de contingencia</button></div>
+</div>
+<div class="mx">
+<div class="fig" id="fig" aria-label="Matriz esfuerzo por impacto"><svg id="sv" role="img"></svg></div>
+<div class="side">
+<p><b>Cómo se lee.</b> Eje horizontal: esfuerzo (1–5), promedio de cuatro criterios. Eje vertical: impacto (1–5) según el sobrecosto asignado: 5 ≥ USD 1 M; 4 = 0,6–1,0 M; 3 = 0,4–0,6 M; 2 = 0,1–0,4 M; 1 = ninguno. El tamaño de cada círculo es el beneficio anual del escenario elegido.</p>
+<p id="lectura"></p>
+<p><b>Por qué la alzada va primero.</b> CU2 v1 está en el cuadrante de victorias rápidas: impacto 4 con esfuerzo 2,25, datos que ya existen (Serasa, límites, historial) y sin escribir en el ERP. Funciona un mes en modo sombra (sin beneficio) y autoaprueba desde el mes 3. El panel de SLA va antes porque cuesta poco y fija la línea base contra la que se mide todo lo demás.</p>
+</div></div>
+</div></header>
+
+<main class="band" style="padding-top:0"><div class="wrap">
+<section class="rule"><h2>Esfuerzo: cuatro criterios explícitos</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Iniciativa</th><th class="n">ERP sin API</th><th class="n">Datos</th><th class="n">Cambio de proceso y personas</th><th class="n">Costo</th><th class="n">Esfuerzo</th><th>Justificación</th></tr></thead><tbody id="tc"></tbody></table></div>
+<p class="note">1 = trivial, 5 = muy alto. ERP: 1 sin contacto, 3 lee exportaciones, 5 debe escribir en el ERP sin API. Datos: 1 existen limpios, 5 hay que construirlos. Costo: según la inversión estimada.</p>
+</section>
+
+<section class="rule" style="margin-top:48px"><h2>Hoja de ruta de 12 meses y dependencias</h2>
+<div class="gantt" id="gt"></div>
+<div class="months"><div></div><div><span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span><span>M7</span><span>M8</span><span>M9</span><span>M10</span><span>M11</span><span>M12</span></div></div>
+<p class="note">Negro: construcción. Gris: modo sombra (las reglas recomiendan, el gerente decide; sin beneficio). Rojo: en operación. Dependencias: tabla de precios única → CU1; política de alzada v1 → CU2 v2; modelo de mora de CU3 (3 meses en operación) → CU2 v2; datos validados de CU1 → CU4; panel de SLA → línea base de todas.</p>
+</section>
+
+<section class="rule" style="margin-top:48px"><h2>Métricas por iniciativa</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Iniciativa</th><th class="n">Sobrecosto asignado</th><th class="n">Captura</th><th class="n">Beneficio en régimen</th><th class="n">Año calendario 1</th><th class="n">Inversión</th><th class="n">Operación/año</th><th class="n">ROI 12 m</th><th class="n">Payback</th><th class="n">Horas/mes</th><th>Adopción mes 1 / 3 / 6</th></tr></thead><tbody id="tm"></tbody></table></div>
+<p class="note">ROI 12 m = (beneficio de los primeros 12 meses desde la puesta en marcha de cada caso, con rampa de adopción − inversión − operación de 12 meses) ÷ (inversión + operación). En CU2 el primer mes es modo sombra y no suma beneficio. Inversión en punto medio para ROI y payback. Año calendario 1 = meses 1 a 12 del programa según la hoja de ruta; en la fila del programa, el costo del año 1 incluye toda la inversión y la operación prorrateada. Horas/mes en régimen (adopción del mes 6). El valor de las horas (USD 4,4/h, unos USD 9.800/año) no se suma: evitaría doble conteo con gastos administrativos. Adopción: CU2 = pedidos elegibles autoaprobados desde el día 61.</p>
+</section>
+
+<section class="rule" style="margin-top:48px"><h2>Supuestos</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Supuesto</th><th>Valor</th><th>Base</th></tr></thead><tbody>
+<tr><td data-l="Supuesto">Lectura de los USD 960.000</td><td data-l="Valor">B: repartidos entre reentregas (515.000) y fletes (445.000); A como techo</td><td data-l="Base">Hoja Cuellos_de_botella, fila "Reentregas y fletes de emergencia". A depende de que contabilidad confirme que la cifra está solo en fletes</td></tr>
+<tr><td data-l="Supuesto">Captura por caso</td><td data-l="Valor">CU1 25/40/60 · CU2 30/50/70 · CU3 20/35/50 · CU4 20/35/50 %</td><td data-l="Base">Mayor donde la decisión depende solo de Taranis (reglas de CU2); menor donde depende de un modelo o de exportaciones (CU3, CU4). El escenario bajo es el compromiso</td></tr>
+<tr><td data-l="Supuesto">Hoja de ruta</td><td data-l="Valor">Panel M1 · CU2 sombra M2, autoaprobación M3 · CU1 M6 · CU3 M7 · CU4 M10</td><td data-l="Base">Dependencias de la matriz; el beneficio del año calendario 1 se calcula sobre estas fechas</td></tr>
+<tr><td data-l="Supuesto">Contingencia de inversión</td><td data-l="Valor">+30 % [AJUSTAR]</td><td data-l="Base">Sensibilidad; la inversión base no cambia</td></tr>
+<tr><td data-l="Supuesto">CU2 v2</td><td data-l="Valor">No costeado</td><td data-l="Base">Se costea cuando el modelo de CU3 tenga 3 meses de operación (mes 10)</td></tr>
+<tr><td data-l="Supuesto">Tarifa mixta de implementación</td><td data-l="Valor">USD 1.500–2.500 por semana-persona</td><td data-l="Base">Equipo mixto interno y externo; a confirmar con cotizaciones</td></tr>
+<tr><td data-l="Supuesto">Semanas-persona</td><td data-l="Valor">Panel 2–4 · CU2 10–14 · CU1 25–35 · CU3 18–26 · CU4 14–20</td><td data-l="Base">Alcance de la v1 de cada caso; CU1 incluye tabla de precios única, formulario de pedido y carga asistida al ERP</td></tr>
+<tr><td data-l="Supuesto">Operación anual</td><td data-l="Valor">USD 1.000–24.000 según caso (total USD 49.000 en punto medio)</td><td data-l="Base">Uso de API de modelos, mantenimiento de reglas y licencias. Referencia verificada: ChatGPT Business, Claude Team estándar USD 20–25 por usuario al mes; Google Workspace Business Standard con Gemini USD 14 (compromiso anual). Precios de lista en EE. UU.; en Brasil pueden variar</td></tr>
+<tr><td data-l="Supuesto">Pedidos al mes</td><td data-l="Valor">200 (rango 180–220)</td><td data-l="Base">Doc 06, punto medio</td></tr>
+<tr><td data-l="Supuesto">Reparto de los 40 min por pedido</td><td data-l="Valor">20 min crédito (CU2) + 20 min copia de datos (CU1)</td><td data-l="Base">El kit da el total; el reparto es SUPUESTO</td></tr>
+<tr><td data-l="Supuesto">Tiempo residual</td><td data-l="Valor">CU1 5 min; CU2 2 min autoaprobado, 10 min excepción</td><td data-l="Base">Validación humana que se mantiene</td></tr>
+<tr><td data-l="Supuesto">Autoaprobados</td><td data-l="Valor">60 % de los pedidos</td><td data-l="Base">Clientes recurrentes dentro de su límite; a calibrar con el historial</td></tr>
+<tr><td data-l="Supuesto">Cobranza y cierre</td><td data-l="Valor">3 boletos por pedido, 3 min por recordatorio, 70 % de riesgo bajo; cierre con 2 personas</td><td data-l="Base">Boletos 30/60/90 (doc 06); el resto es SUPUESTO</td></tr>
+<tr><td data-l="Supuesto">Costo hora del asistente</td><td data-l="Valor">USD 4,4 (3,5–5,7)</td><td data-l="Base">Salario de R$ 2.500–3.500 (avisos en São Paulo, 2026) × factor de cargas de 1,7–2,0 ÷ 220 h ÷ R$ 5,56 por USD (cierre del BCB, 11-nov-2026)</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="rule" style="margin-top:48px"><h2>Supervisión humana del consultor</h2>
+<p class="lede" style="margin-top:10px">El borrador se produjo en modo lote: la IA propuso cada decisión con su recomendación y sus alternativas calculadas, y el consultor decidió.</p>
+<ul class="h">
+<li><b>Lectura de los USD 960.000: B como base y A como techo.</b> A depende de una sola fila ambigua y le da a CU1 un 54 % más; contabilidad debe confirmar si la cifra está solo en fletes.</li>
+<li><b>Captura por caso.</b> Refleja quién controla la decisión; cada porcentaje es un supuesto con su base y el escenario bajo es la cifra de compromiso.</li>
+<li><b>Costo hora del asistente: USD 4,4.</b> Se usa solo para valorar la capacidad liberada, fuera del ROI.</li>
+<li><b>Comité completo, con el controller como auditor.</b></li>
+<li><b>Núcleo mensual y pleno trimestral.</b></li>
+<li><b>Compromiso de no reducir plantilla en 12 meses</b>, redactado como recomendación a la CEO, no como promesa.</li>
+<li><b>Registro de decisiones por 5 años</b>, con la entrada guardada por referencia (ID de pedido) y no como copia con datos personales.</li>
+<li><b>Correcciones del consultor al cálculo de la IA:</b> separar el beneficio en régimen del beneficio del año calendario 1; no contar beneficio en el mes de sombra de CU2; agregar una sensibilidad de +30 % en la inversión.</li>
+</ul>
+</section>
+
+<section class="rule" style="margin-top:48px"><h2>Prompt utilizado</h2>
+<div class="prompt"><pre id="p">ROL: Eres consultor senior de IA aplicada a finanzas y operaciones. Preparas para la CEO de Taranis Black (muebles ergonómicos corporativos; operación en Brasil; flujo B2B = 70 % de los ingresos, 180–220 pedidos/mes) la priorización de sus iniciativas de IA.
+
+CONTEXTO: Cuatro casos validados en la etapa anterior, uno por eslabón del pedido al cierre, más un candidato:
+- CU1 Validación del pedido en origen (extracción con LLM + reglas contra catálogo, tabla de precios única, CNPJ/IE y CIF/FOB). Requiere tabla de precios única y carga asistida al ERP, que no tiene API.
+- CU2 Aprobación de crédito por matriz de alzada (v1 reglas + score Serasa + resumen generado; v2 suma el modelo de mora de CU3).
+- CU3 Cobranza preventiva por riesgo (modelo de probabilidad de atraso + recordatorios dentro de plantillas aprobadas).
+- CU4 Conciliación asistida para el cierre (reglas de emparejamiento NF-e ↔ boleto ↔ pago ↔ flete + explicación generada de excepciones).
+- Candidato: panel de SLA por etapa (habilitador de medición).
+
+DATOS (kit 05, anual, USD; sobrecosto = real − presupuesto):
+- Fletes y logística +1.360.000 · Cancelaciones por retraso logístico +675.000 · Provisión por inadimplencia +670.000 · Reentregas y multas por divergencia +515.000 · Gastos administrativos y legados +260.000. Total +3.480.000 = 85 % del hueco de EBITDA (−4.078.000).
+- Hoja Cuellos_de_botella: &quot;Reentregas y fletes de emergencia&quot; USD 960.000/año en fletes duplicados (2,8 % vs techo 0,8 % de la facturación); cierre 7 días vs 2 (USD 180.000/año); crédito 48 h vs ≤4 h; boletos divergentes 6,8 % vs &lt;0,5 %; inadimplencia &gt;90 días 3,4 % vs 1,2 %.
+- Proceso: el asistente dedica 40 min por pedido a consultar crédito y copiar datos.
+
+TAREA:
+1. Presenta las dos lecturas posibles de los USD 960.000 (A: contenidos en la línea de fletes; B: repartidos entre reentregas y fletes), cuánto asigna cada una a CU1 y cuánto sobrecosto queda sin causa. Usa B como base y A como techo, condicionado a que contabilidad confirme que la cifra está solo en fletes.
+2. Puntúa el impacto (1–5) solo con el sobrecosto asignado en USD (5: ≥1 M; 4: 0,6–1,0 M; 3: 0,4–0,6 M; 2: 0,1–0,4 M; 1: ninguno) y el esfuerzo (1–5) como promedio de cuatro criterios explícitos: integración con el ERP sin API, disponibilidad de datos, cambio de proceso y de personas, costo. Justifica cada nota en una línea.
+3. Propón el orden de implementación con sus dependencias (tabla de precios única antes de CU1; modelo de CU3 antes de CU2 v2; datos limpios de CU1 antes de CU4).
+4. Por iniciativa calcula con código: beneficio en régimen en tres escenarios = sobrecosto asignado × porcentaje de captura conservador (el escenario bajo es la cifra de compromiso); inversión = semanas-persona × tarifa mixta; ROI a 12 meses desde la puesta en marcha de cada caso, con rampa de adopción (un mes en modo sombra no genera beneficio); payback en meses; beneficio del año calendario 1 según la hoja de ruta; sensibilidad con +30 % de inversión; horas liberadas al mes derivadas de los 40 min por pedido; metas de adopción en los meses 1, 3 y 6.
+5. Calcula también las alternativas de cada decisión (lectura A, captura uniforme más baja, costo hora del asistente) para mostrar su efecto.
+
+RESTRICCIONES:
+- Ninguna cifra sin fuente: cada número sale de una fila de DATOS, de una fórmula declarada o de un SUPUESTO con su base.
+- Usa sobrecostos frente al presupuesto, nunca montos totales; no sumes cifras de la hoja de cuellos de botella al P&amp;L sin declarar el solapamiento; cada línea de sobrecosto se asigna a un solo caso.
+- Las metas del kit son benchmark, no promesa.
+- El valor de las horas liberadas no se suma al ROI (evita doble conteo con gastos administrativos).
+- Costos y precios de herramientas: rango como SUPUESTO; precios públicos solo si se verificaron.
+- Español neutro profesional, comprensible para la CEO en 2 minutos.
+
+FORMATO: matriz visual (esfuerzo en X, impacto en Y, tamaño = beneficio), tabla de criterios, hoja de ruta de 12 meses con dependencias, tabla de métricas por iniciativa y tabla de supuestos (supuesto · valor · base).</pre></div>
+<button type="button" class="cp" id="cp">Copiar prompt</button>
+</section>
+<footer style="margin-top:48px;border-top:1px solid var(--line);padding-top:14px">Elaborado por Carlos Hurtado Rojas. Cifras del kit de datos del challenge (archivo 05, hojas Resultados_trimestrales y Cuellos_de_botella_y_costos; documento 06). Cálculos hechos con código; los supuestos se declaran como tales. Complementa el AI Canvas de la Etapa 1.</footer>
+</div></main>
+<script>
+{
+const D={"asig": {"A": {"CU1": 1475000, "CU2": 675000, "CU3": 670000, "CU4": 260000, "SLA": 0}, "B": {"CU1": 960000, "CU2": 675000, "CU3": 670000, "CU4": 260000, "SLA": 0}}, "imp": {"A": {"CU1": 5, "CU2": 4, "CU3": 4, "CU4": 2, "SLA": 1}, "B": {"CU1": 4, "CU2": 4, "CU3": 4, "CU4": 2, "SLA": 1}}, "esf": {"SLA": 1.5, "CU2": 2.25, "CU1": 4.0, "CU3": 3.25, "CU4": 3.25}, "crit": {"SLA": [2, 2, 1, 1], "CU2": [2, 2, 3, 2], "CU1": [5, 3, 4, 4], "CU3": [3, 4, 3, 3], "CU4": [4, 3, 3, 3]}, "res": {"A|bajo|1.0|CU1": {"run": 368750.0, "roi": 2.740942028985507, "pay": 4, "y1": 155182.29166666666}, "A|bajo|1.0|CU2": {"run": 202500.0, "roi": 3.963235294117647, "pay": 4, "y1": 151875.0}, "A|bajo|1.0|CU3": {"run": 134000.0, "roi": 0.9808695652173913, "pay": 7, "y1": 50250.0}, "A|bajo|1.0|CU4": {"run": 52000.0, "roi": -0.10898876404494381, "pay": 14, "y1": 7150.0}, "A|bajo|1.0|TOT": {"run": 757250.0, "roi": 1.7770415738678542, "y1": 364457.2916666666, "costo_y1": 203625.0, "neto_y1": 160832.29166666663, "pct": 0.21760057471264369, "inv": 175500.0}, "A|bajo|1.3|CU1": {"run": 368750.0, "roi": 2.0342149454240133, "pay": 5, "y1": 155182.29166666666}, "A|bajo|1.3|CU2": {"run": 202500.0, "roi": 3.066265060240964, "pay": 5, "y1": 151875.0}, "A|bajo|1.3|CU3": {"run": 134000.0, "roi": 0.5974754558204769, "pay": 8, "y1": 50250.0}, "A|bajo|1.3|CU4": {"run": 52000.0, "roi": -0.2810516772438803, "pay": 18, "y1": 7150.0}, "A|bajo|1.3|TOT": {"run": 757250.0, "roi": 1.2494888447892234, "y1": 364457.2916666666, "costo_y1": 256275.0, "neto_y1": 108182.29166666663, "pct": 0.21760057471264369, "inv": 228150.0}, "A|base|1.0|CU1": {"run": 590000.0, "roi": 4.985507246376811, "pay": 3, "y1": 248291.66666666663}, "A|base|1.0|CU2": {"run": 337500.0, "roi": 7.272058823529412, "pay": 3, "y1": 253125.0}, "A|base|1.0|CU3": {"run": 234499.99999999997, "roi": 2.4665217391304344, "pay": 4, "y1": 87937.49999999999}, "A|base|1.0|CU4": {"run": 91000.0, "roi": 0.5592696629213483, "pay": 8, "y1": 12512.5}, "A|base|1.0|TOT": {"run": 1253000.0, "roi": 3.595972531551596, "y1": 601866.6666666666, "costo_y1": 203625.0, "neto_y1": 398241.6666666666, "pct": 0.3600574712643678, "inv": 175500.0}, "A|base|1.3|CU1": {"run": 590000.0, "roi": 3.854743912678421, "pay": 4, "y1": 248291.66666666663}, "A|base|1.3|CU2": {"run": 337500.0, "roi": 5.77710843373494, "pay": 4, "y1": 253125.0}, "A|base|1.3|CU3": {"run": 234499.99999999997, "roi": 1.7955820476858342, "pay": 5, "y1": 87937.49999999999}, "A|base|1.3|CU4": {"run": 91000.0, "roi": 0.25815956482320945, "pay": 10, "y1": 12512.5}, "A|base|1.3|TOT": {"run": 1253000.0, "roi": 2.722878705875278, "y1": 601866.6666666666, "costo_y1": 256275.0, "neto_y1": 345591.6666666666, "pct": 0.3600574712643678, "inv": 228150.0}, "A|alto|1.0|CU1": {"run": 885000.0, "roi": 7.978260869565218, "pay": 3, "y1": 372437.5}, "A|alto|1.0|CU2": {"run": 472499.99999999994, "roi": 10.580882352941174, "pay": 3, "y1": 354374.99999999994}, "A|alto|1.0|CU3": {"run": 335000.0, "roi": 3.9521739130434783, "pay": 3, "y1": 125625.0}, "A|alto|1.0|CU4": {"run": 130000.0, "roi": 1.2275280898876404, "pay": 6, "y1": 17875.0}, "A|alto|1.0|TOT": {"run": 1822500.0, "roi": 5.683184855233853, "y1": 870312.5, "costo_y1": 203625.0, "neto_y1": 666687.5, "pct": 0.5237068965517241, "inv": 175500.0}, "A|alto|1.3|CU1": {"run": 885000.0, "roi": 6.282115869017632, "pay": 3, "y1": 372437.5}, "A|alto|1.3|CU2": {"run": 472499.99999999994, "roi": 8.487951807228914, "pay": 3, "y1": 354374.99999999994}, "A|alto|1.3|CU3": {"run": 335000.0, "roi": 2.993688639551192, "pay": 4, "y1": 125625.0}, "A|alto|1.3|CU4": {"run": 130000.0, "roi": 0.7973708068902992, "pay": 7, "y1": 17875.0}, "A|alto|1.3|TOT": {"run": 1822500.0, "roi": 4.413584701425221, "y1": 870312.5, "costo_y1": 256275.0, "neto_y1": 614037.5, "pct": 0.5237068965517241, "inv": 228150.0}, "B|bajo|1.0|CU1": {"run": 240000.0, "roi": 1.434782608695652, "pay": 6, "y1": 101000.0}, "B|bajo|1.0|CU2": {"run": 202500.0, "roi": 3.963235294117647, "pay": 4, "y1": 151875.0}, "B|bajo|1.0|CU3": {"run": 134000.0, "roi": 0.9808695652173913, "pay": 7, "y1": 50250.0}, "B|bajo|1.0|CU4": {"run": 52000.0, "roi": -0.10898876404494381, "pay": 14, "y1": 7150.0}, "B|bajo|1.0|TOT": {"run": 628500.0, "roi": 1.308685968819599, "y1": 310275.0, "costo_y1": 203625.0, "neto_y1": 106650.0, "pct": 0.18060344827586206, "inv": 175500.0}, "B|bajo|1.3|CU1": {"run": 240000.0, "roi": 0.9748110831234257, "pay": 7, "y1": 101000.0}, "B|bajo|1.3|CU2": {"run": 202500.0, "roi": 3.066265060240964, "pay": 5, "y1": 151875.0}, "B|bajo|1.3|CU3": {"run": 134000.0, "roi": 0.5974754558204769, "pay": 8, "y1": 50250.0}, "B|bajo|1.3|CU4": {"run": 52000.0, "roi": -0.2810516772438803, "pay": 18, "y1": 7150.0}, "B|bajo|1.3|TOT": {"run": 628500.0, "roi": 0.8701064405556558, "y1": 310275.0, "costo_y1": 256275.0, "neto_y1": 54000.0, "pct": 0.18060344827586206, "inv": 228150.0}, "B|base|1.0|CU1": {"run": 384000.0, "roi": 2.8956521739130436, "pay": 4, "y1": 161600.0}, "B|base|1.0|CU2": {"run": 337500.0, "roi": 7.272058823529412, "pay": 3, "y1": 253125.0}, "B|base|1.0|CU3": {"run": 234499.99999999997, "roi": 2.4665217391304344, "pay": 4, "y1": 87937.49999999999}, "B|base|1.0|CU4": {"run": 91000.0, "roi": 0.5592696629213483, "pay": 8, "y1": 12512.5}, "B|base|1.0|TOT": {"run": 1047000.0, "roi": 2.8466035634743876, "y1": 515175.0, "costo_y1": 203625.0, "neto_y1": 311550.0, "pct": 0.30086206896551726, "inv": 175500.0}, "B|base|1.3|CU1": {"run": 384000.0, "roi": 2.159697732997481, "pay": 5, "y1": 161600.0}, "B|base|1.3|CU2": {"run": 337500.0, "roi": 5.77710843373494, "pay": 4, "y1": 253125.0}, "B|base|1.3|CU3": {"run": 234499.99999999997, "roi": 1.7955820476858342, "pay": 5, "y1": 87937.49999999999}, "B|base|1.3|CU4": {"run": 91000.0, "roi": 0.25815956482320945, "pay": 10, "y1": 12512.5}, "B|base|1.3|TOT": {"run": 1047000.0, "roi": 2.1158668591015695, "y1": 515175.0, "costo_y1": 256275.0, "neto_y1": 258900.0, "pct": 0.30086206896551726, "inv": 228150.0}, "B|alto|1.0|CU1": {"run": 576000.0, "roi": 4.843478260869565, "pay": 3, "y1": 242400.0}, "B|alto|1.0|CU2": {"run": 472499.99999999994, "roi": 10.580882352941174, "pay": 3, "y1": 354374.99999999994}, "B|alto|1.0|CU3": {"run": 335000.0, "roi": 3.9521739130434783, "pay": 3, "y1": 125625.0}, "B|alto|1.0|CU4": {"run": 130000.0, "roi": 1.2275280898876404, "pay": 6, "y1": 17875.0}, "B|alto|1.0|TOT": {"run": 1513500.0, "roi": 4.55913140311804, "y1": 740275.0, "costo_y1": 203625.0, "neto_y1": 536650.0, "pct": 0.4349137931034483, "inv": 175500.0}, "B|alto|1.3|CU1": {"run": 576000.0, "roi": 3.739546599496222, "pay": 4, "y1": 242400.0}, "B|alto|1.3|CU2": {"run": 472499.99999999994, "roi": 8.487951807228914, "pay": 3, "y1": 354374.99999999994}, "B|alto|1.3|CU3": {"run": 335000.0, "roi": 2.993688639551192, "pay": 4, "y1": 125625.0}, "B|alto|1.3|CU4": {"run": 130000.0, "roi": 0.7973708068902992, "pay": 7, "y1": 17875.0}, "B|alto|1.3|TOT": {"run": 1513500.0, "roi": 3.5030669312646583, "y1": 740275.0, "costo_y1": 256275.0, "neto_y1": 484000.0, "pct": 0.4349137931034483, "inv": 228150.0}}, "impl": {"SLA": [3000, 10000], "CU2": [15000, 35000], "CU1": [37500, 87500], "CU3": [27000, 65000], "CU4": [21000, 50000]}, "op": {"SLA": 1500.0, "CU2": 9000.0, "CU1": 18000.0, "CU3": 11500.0, "CU4": 9000.0}, "horas": {"CU1": 47.5, "CU2": 49.333333333333336, "CU3": 19.95, "CU4": 68.0, "SLA": 0}};
+const NM={SLA:"Panel de SLA",CU2:"CU2 v1 · Matriz de alzada",CU1:"CU1 · Validación en origen",CU3:"CU3 · Cobranza preventiva",CU4:"CU4 · Conciliación del cierre"};
+const SH={SLA:"Panel SLA",CU2:"CU2 Alzada",CU1:"CU1 Validación",CU3:"CU3 Cobranza",CU4:"CU4 Cierre"};
+const ORD=["SLA","CU2","CU1","CU3","CU4"];
+const CAP={CU1:{bajo:.25,base:.40,alto:.60},CU2:{bajo:.30,base:.50,alto:.70},CU3:{bajo:.20,base:.35,alto:.50},CU4:{bajo:.20,base:.35,alto:.50}};
+const ADO={SLA:"80 / 100 / 100 % de jefaturas que lo revisan cada semana",CU2:"50 / 90 / 100 % de pedidos elegibles autoaprobados (desde el día 61)",CU1:"30 / 70 / 95 % de pedidos ingresados por el flujo",CU3:"40 / 80 / 95 % de boletos con contacto según riesgo",CU4:"40 / 70 / 85 % de partidas conciliadas sin intervención"};
+const JUS={SLA:"Lee exportaciones y marcas de tiempo; no cambia el proceso",CU2:"Reglas sobre Serasa, límites e historial; el gerente cambia su rol",CU1:"Debe cargar al ERP sin API; tabla de precios única por construir; cambia el envío de los vendedores",CU3:"Historial de boletos exportable (SUPUESTO) y etiquetado no confirmado",CU4:"Cruza exportaciones de NF-e, boletos, pagos y bancos; registra ajustes"};
+const GT=[["Tabla de precios única y formulario de pedido","Prerrequisitos de CU1, sin IA",0,2,null,null],["Panel de SLA","Línea base de medición, M1",0,1,null,1],["CU2 v1 · Matriz de alzada","Sombra M2, autoaprueba desde M3",0,1,[1,2],2],["CU1 · Validación en origen","En marcha M6, piloto con un equipo",2,5,null,5],["CU3 · Cobranza preventiva","En marcha M7",3,6,null,6],["CU4 · Conciliación del cierre","En marcha M10, con datos de CU1",6,9,null,9],["CU2 v2 · + modelo de mora","Tras 3 meses de CU3; M12",9,11,null,11]];
+let L="B",E="base",F="1.0";
+const usd=v=>"USD "+String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g,".");const usdk=v=>usd(Math.round(v/1000)*1000);
+const mill=v=>"USD "+(v/1e6).toFixed(2).replace(".",",")+" M";
+const pc=v=>Math.round(v*10)*10+" %";
+const capOf=cu=>CAP[cu][E];const K=(e,cu)=>`${L}|${e}|${F}|${cu}`;
+const $=id=>document.getElementById(id);
+function crit(){ $("tc").innerHTML=ORD.map(k=>{const c=D.crit[k];return `<tr><td data-l="Iniciativa">${NM[k]}</td>${c.map((x,i)=>`<td class="n" data-l="${["ERP sin API","Datos","Cambio","Costo"][i]}">${x}</td>`).join("")}<td class="n" data-l="Esfuerzo"><b>${String(D.esf[k]).replace(".",",")}</b></td><td data-l="Justificación">${JUS[k]}</td></tr>`}).join(""); }
+function gantt(){ $("gt").innerHTML=GT.map(([n,s,a,b,sh,l])=>`<div class="g"><div class="lab">${n}<small>${s}</small></div><div class="trk"><div class="blk" style="left:${a/12*100}%;width:${(b-a)/12*100}%"></div>${sh?`<div class="blk" style="left:${sh[0]/12*100}%;width:${(sh[1]-sh[0])/12*100}%;background:var(--grey)"></div>`:""}${l!==null&&l<12?`<div class="blk live" style="left:${l/12*100}%;width:${(12-l)/12*100}%"></div>`:""}</div></div>`).join(""); }
+function table(){
+  const f=Number(F); let ti=[0,0],to=0;
+  const rng=k=>`${usd(D.impl[k][0]*f)}–${usd(D.impl[k][1]*f).slice(4)}`;
+  const rows=ORD.map(k=>{
+    ti[0]+=D.impl[k][0]*f;ti[1]+=D.impl[k][1]*f;to+=D.op[k];
+    if(k==="SLA") return `<tr><td data-l="Iniciativa">${NM[k]}</td><td class="n" data-l="Sobrecosto">—</td><td class="n" data-l="Captura">—</td><td class="n" data-l="Régimen">Sin beneficio propio</td><td class="n" data-l="Año 1">—</td><td class="n" data-l="Inversión">${rng(k)}</td><td class="n" data-l="Operación">${usd(D.op[k])}</td><td class="n" data-l="ROI">—</td><td class="n" data-l="Payback">—</td><td class="n" data-l="Horas">—</td><td data-l="Adopción">${ADO[k]}</td></tr>`;
+    const r=D.res[K(E,k)];
+    return `<tr><td data-l="Iniciativa">${NM[k]}</td><td class="n" data-l="Sobrecosto">${usd(D.asig[L][k])}</td><td class="n" data-l="Captura">${Math.round(capOf(k)*100)} %</td><td class="n" data-l="Régimen"><b>${usd(r.run)}</b></td><td class="n" data-l="Año 1">${usdk(r.y1)}</td><td class="n" data-l="Inversión">${rng(k)}</td><td class="n" data-l="Operación">${usd(D.op[k])}</td><td class="n" data-l="ROI">${pc(r.roi)}</td><td class="n" data-l="Payback">${r.pay} meses</td><td class="n" data-l="Horas">${Math.round(D.horas[k])}</td><td data-l="Adopción">${ADO[k]}</td></tr>`});
+  const T=D.res[K(E,"TOT")];
+  rows.push(`<tr class="tot"><td data-l="Iniciativa">Programa</td><td class="n" data-l="Sobrecosto">${usd(Object.values(D.asig[L]).reduce((a,b)=>a+b,0))}</td><td class="n" data-l="Captura">${Math.round(T.pct*100)} % del total</td><td class="n" data-l="Régimen">${usd(T.run)}</td><td class="n" data-l="Año 1">${usdk(T.y1)}<br><small>costo año 1: ${usdk(T.costo_y1)}</small></td><td class="n" data-l="Inversión">${usd(ti[0])}–${usd(ti[1]).slice(4)}</td><td class="n" data-l="Operación">${usd(to)}</td><td class="n" data-l="ROI">${pc(T.roi)}</td><td class="n" data-l="Payback">—</td><td class="n" data-l="Horas">185</td><td data-l="Adopción">—</td></tr>`);
+  $("tm").innerHTML=rows.join("");
+  const C0=D.res[`${L}|bajo|${F}|TOT`];
+  $("k1").textContent=mill(C0.run);$("k1s").textContent=`compromiso anual en régimen (escenario bajo, ${Math.round(C0.pct*100)} % del sobrecosto)`;
+  $("k2").textContent=mill(T.run);$("k2s").textContent=`beneficio anual en régimen (escenario ${E}, ${Math.round(T.pct*100)} %)`;
+  $("k3").textContent=mill(T.y1);$("k3s").textContent=`año calendario 1 (escenario ${E}), frente a un costo de ${mill(T.costo_y1)}`;
+  $("k4").textContent=pc(T.roi);$("k4s").textContent=`ROI a 12 meses desde la puesta en marcha${F==="1.3"?", con +30 % de inversión":""}`;
+  $("lectura").innerHTML=L==="B"?"<b>Lectura B (base).</b> Los USD 960.000 cubren las reentregas (515.000) y 445.000 de fletes: CU1 ataca USD 960.000 (impacto 4) y quedan USD 915.000 de fletes sin causa asignada.":"<b>Lectura A (techo).</b> Si contabilidad confirma que los USD 960.000 están solo en la línea de fletes, CU1 ataca USD 1.475.000 (fletes 960.000 + reentregas 515.000), sube a impacto 5 y quedan unos USD 400.000 sin causa asignada. El orden no cambia.";
+}
+const sv=$("sv");
+function draw(){
+  const W=sv.clientWidth,H=sv.clientHeight; if(!W||!H) return;
+  const m={l:40,r:12,t:10,b:44}, w=W-m.l-m.r, h=H-m.t-m.b, sm=W<520;
+  const X=v=>m.l+(v-0.5)/5*w, Y=v=>m.t+(5.5-v)/5*h;
+  let s=`<rect x="${X(0.5)}" y="${Y(5.5)}" width="${X(3)-X(0.5)}" height="${Y(3)-Y(5.5)}" fill="var(--soft)"/>`;
+  for(let i=1;i<=5;i++){s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${Y(0.5)}" y2="${Y(5.5)}" stroke="var(--line)"/><line x1="${X(0.5)}" x2="${X(5.5)}" y1="${Y(i)}" y2="${Y(i)}" stroke="var(--line)"/>`;
+    s+=`<text x="${X(i)}" y="${Y(0.5)+18}" font-size="12" text-anchor="middle" fill="var(--grey)">${i}</text><text x="${X(0.5)-8}" y="${Y(i)+4}" font-size="12" text-anchor="end" fill="var(--grey)">${i}</text>`;}
+  s+=`<line x1="${X(3)}" x2="${X(3)}" y1="${Y(0.5)}" y2="${Y(5.5)}" stroke="var(--ink)" stroke-dasharray="4 4"/><line x1="${X(0.5)}" x2="${X(5.5)}" y1="${Y(3)}" y2="${Y(3)}" stroke="var(--ink)" stroke-dasharray="4 4"/>`;
+  s+=`<text x="${X(0.5)+8}" y="${Y(5.5)+16}" font-size="12" font-weight="700" fill="var(--grey)">Victorias rápidas</text><text x="${X(5.5)-8}" y="${Y(3)-8}" font-size="12" font-weight="700" text-anchor="end" fill="var(--grey)">Proyectos mayores</text>`;
+  s+=`<text x="${X(5.5)-8}" y="${Y(0.5)-8}" font-size="12" font-weight="700" text-anchor="end" fill="var(--grey)">Revisar</text><text x="${X(0.5)+8}" y="${Y(0.5)-8}" font-size="12" font-weight="700" fill="var(--grey)">Habilitadores</text>`;
+  s+=`<text x="${m.l+w/2}" y="${H-8}" font-size="13" text-anchor="middle" fill="var(--ink)">Esfuerzo →</text><text transform="translate(14 ${m.t+h/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--ink)">Impacto →</text>`;
+  const mx=Math.max(...["CU1","CU2","CU3","CU4"].map(k=>D.res[`A|alto|1.0|${k}`].run));
+  ORD.forEach(k=>{
+    const run=k==="SLA"?0:D.res[K(E,k)].run;
+    const r=k==="SLA"?7:Math.max(9,Math.sqrt(run/mx)*(sm?30:44));
+    const cx=X(D.esf[k]), cy=Y(D.imp[L][k]); const red=k==="CU2";
+    s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${red?"#e4002b":"var(--ink)"}" fill-opacity="${red?0.9:0.82}" stroke="var(--bg)" stroke-width="2"/>`;
+    const up=k==="SLA"||(k==="CU1"&&D.imp[L].CU1<5);
+    const ly=up?cy-r-(run&&!sm?23:8):cy+r+15;
+    s+=`<text x="${cx}" y="${ly}" font-size="${sm?11:13}" font-weight="700" text-anchor="middle" fill="var(--ink)" paint-order="stroke" stroke="var(--bg)" stroke-width="4">${sm?(k==="SLA"?"Panel":k):SH[k]}</text>`;
+    if(run&&!sm) s+=`<text x="${cx}" y="${ly+15}" font-size="12" text-anchor="middle" fill="var(--grey)" paint-order="stroke" stroke="var(--bg)" stroke-width="4">${(run/1e3).toFixed(0)} mil</text>`;
+  });
+  sv.innerHTML=s; sv.setAttribute("aria-label","Matriz: "+ORD.map(k=>`${SH[k]} esfuerzo ${D.esf[k]} impacto ${D.imp[L][k]}`).join("; "));
+}
+function all(){table();draw();}
+function press(group,btn){group.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));}
+$("lA").onclick=e=>{L="A";press(e.target.parentNode,e.target);all()};
+$("lB").onclick=e=>{L="B";press(e.target.parentNode,e.target);all()};
+document.querySelectorAll("[data-e]").forEach(b=>b.onclick=e=>{E=b.dataset.e;press(b.parentNode,b);all()});
+$("iB").onclick=e=>{F="1.0";press(e.target.parentNode,e.target);all()};
+$("iC").onclick=e=>{F="1.3";press(e.target.parentNode,e.target);all()};
+crit();gantt();all();new ResizeObserver(draw).observe(sv);
+$("cp").addEventListener("click",async()=>{const b=$("cp");try{await navigator.clipboard.writeText($("p").innerText);b.textContent="Copiado";}catch(e){b.textContent="Selecciona el texto y copia";}setTimeout(()=>{b.textContent="Copiar prompt";},2200);});
+}
+</script><nav class="tbnav-foot" aria-label="Anterior y siguiente"><a href="ai-canvas.html"><small>← Anterior · 01</small>AI Canvas</a><a class="ix" href="index.html">Índice</a><a class="nx" href="politica-ia-responsable.html"><small>Siguiente · 03 →</small>Política de IA responsable</a></nav></body></html>

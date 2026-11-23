@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de IA responsable — Taranis Black</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: política corporativa para la CEO y los equipos; formal, clara, cada regla con dueño.
+IDEA: el reglamento interno de una empresa, con su tabla de semáforo en la portada.
+PICTURE: la matriz dato × tipo de cuenta que dice en una mirada qué se puede cargar dónde.
+COLOUR and TYPE: blanco, negro, rojo señal #e4002b, un gris; Archivo ancho 112 peso 800 + Archivo (mismo sistema que el AI Canvas).
+LAYOUT: borde izquierdo estricto, secciones numeradas con regla superior, tablas a todo el ancho.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#0b0b0b,#f2f2f2);--grey:light-dark(#666,#a3a3a3);--line:light-dark(#d6d6d6,#2e2e2e);--soft:light-dark(#f3f3f3,#181818);--red:#e4002b;--ok:light-dark(#0b0b0b,#f2f2f2)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}.wrap{max-width:1100px;margin:0 auto}
+h1,h2{font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,4.8vw,52px)}h2{font-size:clamp(22px,2.4vw,28px);margin:22px 0 4px}
+h3{font-size:17px;margin:18px 0 4px}
+.rule{border-top:8px solid var(--ink)}.meta{color:var(--grey);font-size:14px;margin:14px 0 0}
+.draft{display:inline-block;border:1.5px solid var(--red);color:var(--red);font-weight:700;font-size:13px;padding:2px 10px;margin-top:14px}
+.lede{font-size:19px;max-width:62ch;margin:20px 0 0;font-weight:600}
+p,li{max-width:76ch}
+section{border-top:3px solid var(--ink);margin-top:44px}
+.n2{color:var(--red);margin-right:10px}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:15px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;border-bottom:2px solid var(--ink)}
+.sem{margin-top:26px;border-top:3px solid var(--ink)}
+.sem table{font-size:15px}.sem td,.sem th{padding:10px;text-align:center;vertical-align:middle}.sem td:first-child,.sem th:first-child{text-align:left;padding-left:0}
+.c{font-weight:700;font-size:14px;white-space:nowrap}
+.y{background:var(--ink);color:var(--bg)}.q{background:var(--soft);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}.x{background:var(--red);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--grey);margin-top:10px}.legend i{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:14px;border-top:1px solid var(--line)}
+.cols div{padding:12px 14px 14px 0;border-right:1px solid var(--line)}.cols div+div{padding-left:14px}.cols div:last-child{border-right:0}
+.cols h3{margin-top:0}.cols ul{margin:6px 0 0;padding-left:18px}.cols li{margin:5px 0;font-size:15px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:12px 0 0}.steps li{counter-increment:s;padding:8px 0 8px 44px;position:relative;border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:4px;font-stretch:112%;font-weight:800;font-size:26px;color:var(--red);line-height:1}
+.note{font-size:13px;color:var(--grey);margin:10px 0 0}
+.vf{color:var(--red);font-weight:700}
+.prompt{margin-top:16px;background:var(--soft);border-left:6px solid var(--ink)}
+.prompt pre{margin:0;padding:18px;white-space:pre-wrap;font:14px/1.5 Archivo,system-ui,sans-serif;max-height:420px;overflow:auto}
+.cp{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 18px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-top:12px}
+.cp:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+ol.src{font-size:14px;padding-left:20px}ol.src li{margin:4px 0}ol.src a{color:var(--ink)}
+.scroll{overflow-x:auto}
+footer{color:var(--grey);font-size:13px}
+@media(max-width:760px){.cols{grid-template-columns:minmax(0,1fr)}.cols div{border-right:0;border-bottom:1px solid var(--line);padding-left:0!important}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;text-align:right}.stack td::before{content:attr(data-l);font-weight:700;color:var(--grey);text-align:left;flex:0 0 38%}
+.sem td,.sem th{padding:8px 4px}.c{font-size:12px;white-space:normal}}
+</style><style id="tbnav-css">
+.tbnav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px);font:600 13px/1.3 Archivo,system-ui,sans-serif;color:var(--grey);border-bottom:1px solid var(--line);background:var(--bg)}
+.tbnav a{color:var(--ink);text-decoration:none}.tbnav a:hover{color:var(--red)}
+.tbnav .pos{font-stretch:112%;font-weight:800;color:var(--red)}
+.tbnav-foot{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:22px max(5vw,16px) 40px;border-top:3px solid var(--ink);margin-top:8px;font:600 15px/1.3 Archivo,system-ui,sans-serif}
+.tbnav-foot a{color:var(--ink);text-decoration:none}.tbnav-foot a:hover{color:var(--red)}
+.tbnav-foot small{display:block;color:var(--grey);font-size:12px;font-weight:600}
+.tbnav-foot .nx{text-align:right}.tbnav-foot .ix{text-align:center;color:var(--red)}
+@media print{.tbnav,.tbnav-foot{display:none}}
+</style></head>
+<body><nav class="tbnav" aria-label="Navegación de evidencias"><a href="index.html">← Taranis Black · Evidencias</a><span><span class="pos">03 / 06</span> · Política de IA responsable · R0 · Etapa 3</span><span><a href="matriz-esfuerzo-impacto.html">← Anterior</a> · <a href="sipoc-as-is-to-be.html">Siguiente →</a></span></nav>
+<header class="band rule"><div class="wrap">
+<h1>Política de IA responsable</h1>
+<p class="meta">Taranis Black · versión 1.0 · Ruta 0, Etapa 3 · Challenge ONE AI for Business G11 · Carlos Hurtado Rojas · noviembre de 2026</p>
+<span class="draft">Pendiente de aprobación del comité de IA</span>
+<p class="lede">La IA prepara y recomienda. Toda decisión desfavorable para un cliente o con efecto contable la toma una persona identificada.</p>
+<div class="sem">
+<div class="scroll"><table aria-label="Qué dato se puede cargar en qué tipo de cuenta">
+<thead><tr><th>Clase de dato</th><th>Cuenta corporativa de ChatGPT, Gemini o Claude</th><th>Cuenta personal o gratuita</th><th>Casos CU1–CU4</th></tr></thead>
+<tbody>
+<tr><td><b>Público</b><br><small>catálogo, marketing</small></td><td class="c y">Permitido</td><td class="c y">Permitido</td><td class="c y">Permitido</td></tr>
+<tr><td><b>Interno</b><br><small>procedimientos, métricas sin nombres</small></td><td class="c y">Permitido</td><td class="c x">Prohibido</td><td class="c y">Permitido</td></tr>
+<tr><td><b>Confidencial</b><br><small>P&amp;L, precios negociados, límites, score</small></td><td class="c q">Con acuerdo de datos</td><td class="c x">Prohibido</td><td class="c y">Permitido en su alcance</td></tr>
+<tr><td><b>Personal</b><br><small>contactos, socios, empresarios individuales</small></td><td class="c q">Solo con aprobación</td><td class="c x">Prohibido</td><td class="c q">Minimizado y registrado</td></tr>
+</tbody></table></div>
+<div class="legend"><span><i class="y"></i>Permitido</span><span><i class="q"></i>Permitido con condiciones</span><span><i class="x"></i>Prohibido</span></div>
+</div>
+</div></header>
+
+<main class="band" style="padding-top:0"><div class="wrap">
+
+<section><h2><span class="n2">1</span>Alcance y principios</h2>
+<p>Esta política aplica a todo colaborador, proveedor o contratista que use inteligencia artificial con información de Taranis Black: las herramientas de uso general (ChatGPT, Gemini y Claude) y los casos aprobados del flujo del pedido al cierre: CU1 validación del pedido en origen, CU2 aprobación de crédito por matriz de alzada, CU3 cobranza preventiva por riesgo, CU4 conciliación asistida del cierre y el panel de SLA por etapa.</p>
+<p>Principios: supervisión humana proporcional al riesgo; minimización (a la IA se le envía solo lo indispensable); no discriminación; transparencia con clientes y colaboradores sobre el uso de IA; trazabilidad de cada decisión asistida; y verificación de toda cifra generada contra su fuente antes de usarla.</p>
+</section>
+
+<section><h2><span class="n2">2</span>Clasificación de datos</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Clase</th><th>Ejemplos en Taranis</th><th>Regla</th></tr></thead><tbody>
+<tr><td data-l="Clase">Público</td><td data-l="Ejemplos">Catálogo de productos, precios de lista publicados, material de marketing</td><td data-l="Regla">Cualquier herramienta</td></tr>
+<tr><td data-l="Clase">Interno</td><td data-l="Ejemplos">Procedimientos, plantillas, métricas de SLA sin nombres de clientes</td><td data-l="Regla">Solo cuentas corporativas</td></tr>
+<tr><td data-l="Clase">Confidencial</td><td data-l="Ejemplos">Estado de resultados, tabla de precios negociados, Controle_Limites_2026.xlsx, score Serasa de empresas, razón social con montos</td><td data-l="Regla">Cuentas corporativas con acuerdo de tratamiento de datos; nunca en conversaciones o enlaces compartidos fuera de la empresa</td></tr>
+<tr><td data-l="Clase">Personal (LGPD)</td><td data-l="Ejemplos">Nombre, correo y teléfono de compradores; socios consultados en Serasa; empresarios individuales; datos de colaboradores</td><td data-l="Regla">Solo en casos aprobados por el comité, con minimización, base legal identificada y registro</td></tr>
+</tbody></table></div>
+<p class="note">El CNPJ y el score de una empresa no son datos personales; los contactos, los socios y los empresarios individuales sí lo son.</p>
+</section>
+
+<section><h2><span class="n2">3</span>Qué se permite, qué requiere aprobación y qué se prohíbe</h2>
+<div class="cols">
+<div><h3>Permitido</h3><ul>
+<li>Redactar, resumir, traducir y analizar información pública o interna en cuentas corporativas.</li>
+<li>Operar los casos aprobados dentro del alcance definido.</li>
+<li>Prototipar con datos anonimizados o ficticios.</li>
+<li>Usar la IA como apoyo para preparar decisiones, citando la fuente de cada cifra.</li></ul></div>
+<div><h3>Requiere aprobación del comité</h3><ul>
+<li>Un caso nuevo que use datos confidenciales o personales.</li>
+<li>Un proveedor, un modelo o una integración nueva.</li>
+<li>Cambiar umbrales de crédito, de cobranza o de muestreo.</li>
+<li>Cualquier mensaje automático a clientes.</li>
+<li>Pasar un caso de revisión al 100 % a muestreo.</li></ul></div>
+<div><h3>Prohibido</h3><ul>
+<li>Cargar datos confidenciales o personales en cuentas personales o gratuitas.</li>
+<li>Rechazar crédito, bloquear un cliente o condonar deuda sin decisión humana.</li>
+<li>Registrar ajustes contables sin aprobación del controller.</li>
+<li>Usar región, porte o antigüedad como variable de crédito sin justificación de riesgo documentada.</li>
+<li>Presentar como verificada una cifra generada por IA sin contrastarla.</li>
+<li>Usar IA para evaluar el desempeño individual de colaboradores.</li></ul></div>
+</div>
+</section>
+
+<section><h2><span class="n2">4</span>Reglas por caso</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Caso</th><th>Qué hace la IA</th><th>Qué decide una persona</th><th>Supervisión</th><th>Respaldo manual</th></tr></thead><tbody>
+<tr><td data-l="Caso">CU1 · Validación en origen</td><td data-l="IA">Extrae campos del PDF con nivel de confianza; las reglas los contrastan con catálogo, precios, CNPJ/IE y CIF/FOB</td><td data-l="Persona">El vendedor corrige los campos dudosos; el asistente valida antes de emitir la NF-e</td><td data-l="Supervisión">En el ciclo, al 100 % hasta 3 meses con divergencia &lt;0,5 %; luego muestreo del 10 %. Escaneados, siempre al 100 %</td><td data-l="Respaldo">Ingreso manual actual</td></tr>
+<tr><td data-l="Caso">CU2 · Matriz de alzada</td><td data-l="IA">Clasifica el pedido (autoaprobado, analista o gerente) y resume cada excepción</td><td data-l="Persona">Todo rechazo, aumento de límite, cliente nuevo o monto sobre el umbral</td><td data-l="Supervisión">Sobre el ciclo: muestreo semanal de autoaprobaciones</td><td data-l="Respaldo">Aprobación del gerente por correo</td></tr>
+<tr><td data-l="Caso">CU3 · Cobranza preventiva</td><td data-l="IA">Estima la probabilidad de atraso y personaliza recordatorios dentro de plantillas cerradas</td><td data-l="Persona">Negociación, prórroga, condonación y todo contacto con clientes de riesgo alto</td><td data-l="Supervisión">Auditoría mensual de tono y frecuencia; tope de contactos por boleto</td><td data-l="Respaldo">Recordatorios manuales</td></tr>
+<tr><td data-l="Caso">CU4 · Conciliación del cierre</td><td data-l="IA">Empareja NF-e, boleto, pago y flete; explica excepciones y propone ajustes</td><td data-l="Persona">Todo ajuste contable lo aprueba el controller</td><td data-l="Supervisión">Muestreo de emparejamientos en cada cierre; cuadre de saldos totales</td><td data-l="Respaldo">Conciliación en hojas de cálculo</td></tr>
+<tr><td data-l="Caso">Panel de SLA</td><td data-l="IA">Calcula tiempos por etapa a partir de marcas de tiempo</td><td data-l="Persona">Las jefaturas deciden las acciones</td><td data-l="Supervisión">Sin datos personales; no mide a personas</td><td data-l="Respaldo">Reporte mensual actual</td></tr>
+</tbody></table></div>
+</section>
+
+<section><h2><span class="n2">5</span>Registro de uso</h2>
+<p>TI mantiene un inventario de casos con su dueño, los datos que usa, el proveedor y la fecha de aprobación. Cada decisión asistida guarda la versión del modelo y del prompt, la recomendación, quién decidió, qué decidió y cuándo. La entrada se guarda por referencia (ID de pedido, de boleto o de partida), no como copia con datos personales. El registro se conserva durante 5 años, en línea con el plazo de registro de incidentes de la ANPD, y sirve de base para las auditorías del comité y para responder a las solicitudes de revisión de los titulares.</p>
+</section>
+
+<section><h2><span class="n2">6</span>Proveedores y transferencia internacional</h2>
+<p>Solo se usan planes empresariales (ChatGPT Business o Enterprise, Gemini en Google Workspace, Claude Team o Enterprise) que cumplan cuatro condiciones: acuerdo de tratamiento de datos firmado; exclusión contractual del uso de los datos de Taranis para entrenar modelos <span class="vf">[VERIFICAR en cada contrato]</span>; inicio de sesión único con baja inmediata al terminar el vínculo laboral; y un mecanismo válido de transferencia internacional. Cuando el proveedor procesa datos personales en Estados Unidos, se incorporan sin modificaciones las cláusulas estándar contractuales de la Resolución CD/ANPD 19/2024. Para procesamiento en la Unión Europea rige la decisión de adecuación de la Resolución CD/ANPD 32/2026. Compras y legal revisan la lista de subencargados y la región de procesamiento de cada proveedor <span class="vf">[VERIFICAR región de procesamiento]</span>.</p>
+</section>
+
+<section><h2><span class="n2">7</span>Gestión de incidentes</h2>
+<ol class="steps">
+<li><b>Detectar y avisar el mismo día.</b> Quien detecte una fuga, un dato personal cargado en una cuenta no autorizada o una decisión errónea de un caso avisa al encarregado y a TI.</li>
+<li><b>Contener.</b> TI revoca accesos o pausa el caso; el proceso pasa al respaldo manual.</li>
+<li><b>Evaluar el riesgo.</b> El encarregado determina si el incidente puede causar riesgo o daño relevante a los titulares.</li>
+<li><b>Comunicar.</b> Si corresponde, se comunica a la ANPD y a los titulares afectados en 3 días hábiles desde que se confirma que afectó datos personales (Resolución CD/ANPD 15/2024).</li>
+<li><b>Registrar y aprender.</b> Se registra el incidente y el comité revisa la causa raíz en su siguiente sesión.</li>
+</ol>
+</section>
+
+<section><h2><span class="n2">8</span>Capacitación</h2>
+<p>Ningún colaborador recibe acceso a una cuenta corporativa de IA sin completar el módulo general (2 horas: esta política, clasificación de datos y casos de error). Los usuarios de cada caso reciben formación por rol: asistentes financieros, 6 horas de revisión de excepciones; vendedores, 1 hora del nuevo flujo del pedido; gerente financiero y controller, lectura de muestreos e indicadores por segmento. La formación se renueva cada año y cada vez que cambia un caso.</p>
+</section>
+
+<section><h2><span class="n2">9</span>Riesgos de sesgo y de protección de datos</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Riesgo</th><th>Caso</th><th>Probabilidad</th><th>Impacto</th><th>Mitigación</th><th>Dueño</th><th>Indicador</th></tr></thead><tbody>
+<tr><td data-l="Riesgo">Empresas nuevas o pequeñas (score Serasa bajo, sin historial) nunca se autoaprueban y esperan más que el resto</td><td data-l="Caso">CU2</td><td data-l="Prob.">Alta</td><td data-l="Impacto">Medio</td><td data-l="Mitigación">SLA de ≤8 h para su revisión humana; revisión trimestral de umbrales por segmento</td><td data-l="Dueño">Gerente financiero</td><td data-l="Indicador">Tasa de aprobación y tiempo por antigüedad y porte</td></tr>
+<tr><td data-l="Riesgo">Penalización por región: clientes lejanos de Joinville castigados por historial logístico</td><td data-l="Caso">CU2, CU3</td><td data-l="Prob.">Media</td><td data-l="Impacto">Medio</td><td data-l="Mitigación">Región prohibida como variable salvo riesgo documentado; resultados por estado</td><td data-l="Dueño">Gerente financiero</td><td data-l="Indicador">Brecha de aprobación y de contactos por estado</td></tr>
+<tr><td data-l="Riesgo">Cobranza con presión desigual: más contactos o tono más duro hacia clientes pequeños</td><td data-l="Caso">CU3</td><td data-l="Prob.">Media</td><td data-l="Impacto">Alto</td><td data-l="Mitigación">Plantillas cerradas, tope de contactos por boleto, auditoría mensual de tono</td><td data-l="Dueño">Cuentas por cobrar</td><td data-l="Indicador">Contactos por boleto y quejas por segmento</td></tr>
+<tr><td data-l="Riesgo">Errores de extracción en PDF escaneados, más frecuentes que en los firmados digitalmente</td><td data-l="Caso">CU1</td><td data-l="Prob.">Alta</td><td data-l="Impacto">Medio</td><td data-l="Mitigación">Confianza por campo; todo escaneado se revisa al 100 %</td><td data-l="Dueño">Liderazgo comercial</td><td data-l="Indicador">Tasa de error por tipo de documento</td></tr>
+<tr><td data-l="Riesgo">Fuga de datos personales a proveedores de IA o a cuentas personales</td><td data-l="Caso">Todos</td><td data-l="Prob.">Media</td><td data-l="Impacto">Alto</td><td data-l="Mitigación">Solo cuentas corporativas, minimización, cláusulas estándar, capacitación previa al acceso</td><td data-l="Dueño">Encarregado y TI</td><td data-l="Indicador">Incidentes; % de uso en cuentas corporativas</td></tr>
+<tr><td data-l="Riesgo">Decisión de crédito únicamente automatizada sobre una persona natural sin canal de revisión (art. 20 LGPD)</td><td data-l="Caso">CU2</td><td data-l="Prob.">Baja</td><td data-l="Impacto">Alto</td><td data-l="Mitigación">Ningún rechazo automático; canal de revisión publicado</td><td data-l="Dueño">Encarregado</td><td data-l="Indicador">Solicitudes de revisión y plazo de respuesta</td></tr>
+<tr><td data-l="Riesgo">Aprobación por inercia: la persona firma la recomendación sin revisarla</td><td data-l="Caso">CU2, CU4</td><td data-l="Prob.">Media</td><td data-l="Impacto">Alto</td><td data-l="Mitigación">Muestreo independiente; alerta si nadie revierte nada en un mes</td><td data-l="Dueño">Controller</td><td data-l="Indicador">% de recomendaciones revertidas sobre excepciones, esperado 5–20 %</td></tr>
+<tr><td data-l="Riesgo">Cifras inventadas en resúmenes o explicaciones generadas</td><td data-l="Caso">CU2, CU4</td><td data-l="Prob.">Media</td><td data-l="Impacto">Medio</td><td data-l="Mitigación">Los números los calculan las reglas, no el modelo de lenguaje; cada resumen cita su fuente</td><td data-l="Dueño">TI</td><td data-l="Indicador">Discrepancias detectadas en el muestreo</td></tr>
+</tbody></table></div>
+<p class="note">Probabilidad e impacto: juicio del consultor, a recalibrar con los primeros 3 meses de datos.</p>
+</section>
+
+<section><h2><span class="n2">10</span>Comité de IA y auditoría</h2>
+<div class="scroll"><table class="stack"><thead><tr><th>Integrante</th><th>Rol en el comité</th></tr></thead><tbody>
+<tr><td data-l="Integrante">CEO</td><td data-l="Rol">Patrocinadora; preside el pleno y aprueba casos nuevos</td></tr>
+<tr><td data-l="Integrante">Gerente financiero</td><td data-l="Rol">Dueño de CU2 y CU4; propone umbrales de alzada</td></tr>
+<tr><td data-l="Integrante">Liderazgo comercial</td><td data-l="Rol">Dueño de CU1 y de la tabla de precios única junto con finanzas</td></tr>
+<tr><td data-l="Integrante">Operaciones y CD de Joinville</td><td data-l="Rol">Efecto en despacho, CIF/FOB y reentregas</td></tr>
+<tr><td data-l="Integrante">TI</td><td data-l="Rol">Responsable técnico, registro de uso y accesos</td></tr>
+<tr><td data-l="Integrante">Encarregado de datos o legal</td><td data-l="Rol">Secretaría técnica; puede pausar un caso por riesgo de privacidad</td></tr>
+<tr><td data-l="Integrante">RR. HH.</td><td data-l="Rol">Capacitación, gestión del cambio y roles nuevos</td></tr>
+<tr><td data-l="Integrante">Controller (rol propuesto)</td><td data-l="Rol">Ejecuta los muestreos con TI, para que ningún dueño se audite a sí mismo</td></tr>
+</tbody></table></div>
+<h3>Frecuencia según el riesgo</h3>
+<p>Un núcleo operativo (gerente financiero, TI y encarregado) se reúne cada mes, porque CU2 y CU3 toman decisiones que afectan a clientes todos los días. El comité pleno se reúne cada trimestre para revisar resultados, umbrales y casos nuevos. Ante un incidente se convoca en 24 horas. Muestreos: CU2, 20 autoaprobaciones al azar por semana (SUPUESTO); CU1, el 100 % de los pedidos hasta estabilizar y luego el 10 %; CU3, auditoría mensual de tono y frecuencia; CU4, en cada cierre.</p>
+<h3>Qué se audita</h3>
+<p>Resultados por segmento (antigüedad, porte y estado del cliente); tasa de recomendaciones revertidas; mora prevista frente a mora real del modelo de CU3; cumplimiento de plantillas; uso de cuentas corporativas; solicitudes de revisión de titulares; incidentes.</p>
+<h3>Criterio de pausa</h3>
+<div class="scroll"><table class="stack"><thead><tr><th>Caso</th><th>Se pausa si…</th></tr></thead><tbody>
+<tr><td data-l="Caso">CU2</td><td data-l="Se pausa si">La mora de los autoaprobados supera 1,5 veces la de los aprobados por el gerente durante dos meses, o la brecha de aprobación entre segmentos supera 10 puntos sin causa de riesgo documentada</td></tr>
+<tr><td data-l="Caso">CU1</td><td data-l="Se pausa si">La divergencia supera el 2 % de las NF-e en dos semanas, o se emite una NF-e con CNPJ o IE errónea atribuible a la extracción</td></tr>
+<tr><td data-l="Caso">CU3</td><td data-l="Se pausa si">Hay una queja formal por tono o frecuencia, o un segmento recibe 1,5 veces más contactos por boleto que el promedio</td></tr>
+<tr><td data-l="Caso">CU4</td><td data-l="Se pausa si">Más del 1 % de los emparejamientos del muestreo es falso</td></tr>
+<tr><td data-l="Caso">Todos</td><td data-l="Se pausa si">Ocurre un incidente con datos personales o se usa un proveedor sin acuerdo de tratamiento</td></tr>
+</tbody></table></div>
+<p class="note">Pausar significa volver al respaldo manual; el comité decide en 5 días hábiles si se corrige, se recalibra o se retira el caso. Todos los umbrales son SUPUESTOS que el comité calibra en su primera sesión.</p>
+</section>
+
+<section><h2><span class="n2">11</span>Base legal</h2>
+<h3>Brasil · LGPD (Ley 13.709/2018)</h3>
+<ul>
+<li><b>Art. 20.</b> El titular puede pedir la revisión de decisiones tomadas únicamente con base en tratamiento automatizado que afecten sus intereses, incluidas las que definen su perfil de crédito, y tiene derecho a información sobre los criterios usados. Tras el veto presidencial, el texto vigente no exige que la revisión la haga una persona; esta política sí lo exige. Aplica cuando el cliente es una persona natural (empresario individual o socio evaluado).</li>
+<li><b>Art. 6, IX.</b> Principio de no discriminación: no se permite el tratamiento con fines discriminatorios ilícitos o abusivos.</li>
+<li><b>Art. 7, X.</b> La protección del crédito es una base legal propia, que respalda las consultas a Serasa.</li>
+<li><b>Art. 33.</b> La transferencia internacional de datos personales solo procede en los casos que enumera. La Resolución CD/ANPD 19/2024 aprobó las cláusulas estándar contractuales, que se incorporan sin modificaciones; el plazo de adecuación terminó en agosto de 2025. La Resolución CD/ANPD 32/2026 (26 de enero de 2026) reconoce a la Unión Europea como adecuada.</li>
+<li><b>Art. 46.</b> Medidas de seguridad técnicas y administrativas, desde la concepción del producto o servicio.</li>
+<li><b>Art. 48 y Resolución CD/ANPD 15/2024.</b> Comunicación de incidentes con riesgo o daño relevante a la ANPD y a los titulares en 3 días hábiles; registro del incidente por al menos 5 años.</li>
+<li><b>Art. 41 y Resolución CD/ANPD 18/2024.</b> Designación formal del encarregado y publicación de su identidad y contacto.</li>
+<li><b>PL 2338/2023 (marco de IA).</b> Aprobado por el Senado el 10 de diciembre de 2024, recibido por la Cámara de Diputados el 17 de marzo de 2025; en octubre de 2026 seguía en comisión especial a la espera del informe del relator. No es ley: la política no depende de él, pero su enfoque por niveles de riesgo ya está reflejado.</li>
+</ul>
+<h3>Si Taranis opera en Perú</h3>
+<p>Rigen la Ley 29733 de Protección de Datos Personales y su reglamento, el D.S. 016-2024-JUS, publicado el 30 de noviembre de 2024 y vigente desde fines de marzo de 2025. El reglamento exige notificar a la autoridad los incidentes de seguridad en un máximo de 48 horas, designar un oficial de datos personales en los supuestos que prevé e informar al titular sobre la existencia de decisiones automatizadas y perfiles. La Ley 31814, que promueve el uso de la IA, y su reglamento D.S. 115-2025-PCM (publicado el 9 de septiembre de 2025, vigente desde el 22 de enero de 2026) piden al sector privado políticas internas y protocolos de uso ético y seguro de la IA, con plazos graduales por sector y tamaño de empresa <span class="vf">[VERIFICAR el plazo aplicable a Taranis]</span>. Para el sector privado, la evaluación de impacto de los sistemas de riesgo alto es voluntaria. Esta política cubre ambos marcos: el plazo de 48 horas sería el más exigente para incidentes en Perú.</p>
+</section>
+
+<section><h2><span class="n2">12</span>Fuentes (consultadas el 15 de noviembre de 2026)</h2>
+<ol class="src">
+<li><a href="https://serpro.gov.br/lgpd/noticias/2019/congresso-aprecia-veto-ao-artigo-20-da-lgpd">Serpro: Congresso mantém veto ao art. 20 da LGPD</a></li>
+<li><a href="https://confidata.com.br/blog/vies-algoritmico-discriminacao-lgpd">Confidata: viés algorítmico, art. 20 e art. 6, IX</a></li>
+<li><a href="https://confidata.com.br/blog/lgpd-comentada-06-bases-legais-parte2">Confidata: bases legais, art. 7, X (proteção do crédito)</a></li>
+<li><a href="https://www.migalhas.com.br/coluna/migalhas-de-protecao-de-dados/414287/breve-analise-sobre-a-transferencia-internacional-de-dados">Migalhas: Resolução CD/ANPD 19/2024 e art. 33</a></li>
+<li><a href="https://www.mattosfilho.com.br/unico/protecao-dados-perspectivas/">Mattos Filho: fim do prazo das cláusulas-padrão (ago. 2025)</a></li>
+<li><a href="https://cesconbarrieu.com.br/decisao-de-adequacao-reciproca-entre-brasil-e-uniao-europeia-implicacoes-para-fluxos-transfronteiricos-de-dados/">Cescon Barrieu: Resolução 32/2026, adequação Brasil–UE</a></li>
+<li><a href="https://confidata.com.br/blog/seguranca-informacao-lgpd-art-46-pratica">Confidata: art. 46 na prática</a></li>
+<li><a href="https://okai.com.br/documento/2024-04-26/resolucao-cd-anpd-nº-15-de-24-de-abril-de-2024">Resolução CD/ANPD 15/2024, art. 6 (texto)</a></li>
+<li><a href="https://www.globalsuitesolutions.com/pt/?p=117761">GlobalSuite: prazos da Resolução 15/2024 e registro de 5 anos</a></li>
+<li><a href="https://www.globalsuitesolutions.com/pt/?p=117763">GlobalSuite: encarregado na Resolução 18/2024</a></li>
+<li><a href="https://institutobrasileiro.ia.br/artigos/pl-2338-2023-onde-esta-o-projeto-de-lei-de-ia/">IA.BR: PL 2338/2023 em outubro de 2026</a></li>
+<li><a href="https://www.perezllorca.com/es-pe/actualidad/insights/se-aprueba-nuevo-reglamento-de-la-ley-de-proteccion-de-datos-personales/">Pérez-Llorca: D.S. 016-2024-JUS, vigencia</a></li>
+<li><a href="https://cms.law/en/per/publication/aprueban-nuevo-reglamento-de-la-ley-de-proteccion-de-datos-personales">CMS: notificación de incidentes en 48 horas</a></li>
+<li><a href="https://iapp.org/news/a/se-publica-el-nuevo-reglamento-de-protecci-n-de-datos-personales-en-per-">IAPP: oficial de datos personales</a></li>
+<li><a href="https://www.cuatrecasas.com/es/spain/tecnologia-medios-digitales/art/que-establece-el-reglamento-de-la-ley-de-inteligencia-artificial">Cuatrecasas: D.S. 115-2025-PCM, vigencia y evaluación voluntaria</a></li>
+<li><a href="https://cms.law/es/per/publication/se-aprueba-el-reglamento-de-la-ley-que-promueve-el-uso-de-la-inteligencia-artificial-ia">CMS: obligaciones del sector privado, Ley 31814</a></li>
+</ol>
+</section>
+
+<section><h2><span class="n2">13</span>Supervisión humana del consultor</h2>
+<p>El borrador se produjo en modo lote: la IA propuso cada decisión con su recomendación y sus alternativas, y el consultor decidió.</p>
+<ul>
+<li><b>Comité completo, con el controller como auditor</b>, para separar a los dueños de los casos de quien los audita.</li>
+<li><b>Núcleo mensual y pleno trimestral</b>, porque CU2 y CU3 deciden sobre clientes a diario.</li>
+<li><b>Registro de decisiones por 5 años, con la entrada por referencia (ID de pedido)</b> y no como copia con datos personales: el consultor ajustó la propuesta de la IA para aplicar minimización.</li>
+<li><b>Normas:</b> solo se citan las verificadas con búsqueda; el resto queda marcado [VERIFICAR].</li>
+</ul>
+</section>
+
+<section><h2><span class="n2">14</span>Prompt utilizado</h2>
+<div class="prompt"><pre id="p">ROL: Eres consultor senior en gobernanza de IA y protección de datos. Redactas para la CEO de Taranis Black la política corporativa de IA responsable.
+
+CONTEXTO: Taranis Black fabrica muebles ergonómicos corporativos; opera en Brasil (matriz en São Paulo, centro de distribución en Joinville/SC); 280 colaboradores. Los equipos usan ChatGPT, Gemini y Claude. La empresa aprobó cuatro casos de IA en el flujo del pedido al cierre:
+- CU1 Validación del pedido en origen: un modelo de lenguaje extrae datos del PDF firmado (digital o escaneado); el vendedor y el asistente validan antes de emitir la NF-e.
+- CU2 Aprobación de crédito por matriz de alzada: reglas + score Serasa autoaprueban a clientes recurrentes dentro de su límite; excepciones al gerente; ningún rechazo automático.
+- CU3 Cobranza preventiva por riesgo: modelo de probabilidad de atraso y recordatorios dentro de plantillas aprobadas; negociación y condonación humanas.
+- CU4 Conciliación asistida del cierre: reglas de emparejamiento y explicación generada; ningún ajuste sin el controller.
+Datos personales en juego: contactos de compradores, socios consultados en Serasa, empresarios individuales, colaboradores. El CNPJ y el score de una empresa no son datos personales.
+
+TAREA:
+1. Clasificación de datos (público, interno, confidencial, personal) con ejemplos reales de Taranis y la regla de uso por herramienta.
+2. Qué se permite, qué requiere aprobación y qué se prohíbe, aterrizado en ChatGPT, Gemini y Claude y en cada caso.
+3. Reglas de supervisión humana por caso, registro de uso, requisitos a proveedores (acuerdo de tratamiento de datos, transferencia internacional), gestión de incidentes y capacitación.
+4. Tabla de riesgos de sesgo y de protección de datos: riesgo · caso · probabilidad · impacto · mitigación · dueño · indicador. Sesgos concretos: scoring contra empresas nuevas, pequeñas o de ciertas regiones; cobranza con presión desigual; errores de OCR en escaneados; fuga de datos personales a proveedores de IA.
+5. Comité de IA con cargos reales de Taranis, frecuencia de reunión y de auditoría justificada por riesgo, qué se audita y criterio de pausa por caso.
+6. Base legal: LGPD (arts. 6, 7, 20, 33, 41, 46, 48) y resoluciones de la ANPD sobre incidentes, encarregado y transferencia internacional; estado del PL 2338/2023; un párrafo &quot;Si Taranis opera en Perú&quot; (Ley 29733 y D.S. 016-2024-JUS; Ley 31814 y D.S. 115-2025-PCM).
+
+RESTRICCIONES:
+- Verifica con búsqueda web cada artículo o resolución antes de citarlo; lo que no confirmes se marca [VERIFICAR]. Lista las fuentes.
+- No presentes un proyecto de ley como ley vigente.
+- Todo umbral numérico que no venga de una norma es un SUPUESTO que el comité calibra.
+- Ninguna decisión desfavorable para un cliente o con efecto contable queda totalmente automatizada.
+- Español neutro profesional, comprensible para la CEO en 2 minutos.
+
+FORMATO: documento con secciones numeradas, tablas donde haya comparación y una línea de principio rector al inicio.</pre></div>
+<button type="button" class="cp" id="cp">Copiar prompt</button>
+</section>
+<footer style="margin-top:48px;border-top:1px solid var(--line);padding-top:14px">Elaborado por Carlos Hurtado Rojas. No constituye asesoría legal: antes de adoptarla, la revisa un abogado habilitado en Brasil. Complementa el AI Canvas (Etapa 1) y la Matriz Esfuerzo × Impacto (Etapa 2).</footer>
+</div></main>
+<script>
+{
+const b=document.getElementById('cp');
+b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(document.getElementById('p').innerText);b.textContent='Copiado';}catch(e){b.textContent='Selecciona el texto y copia';}setTimeout(()=>{b.textContent='Copiar prompt';},2200);});
+}
+</script><nav class="tbnav-foot" aria-label="Anterior y siguiente"><a href="matriz-esfuerzo-impacto.html"><small>← Anterior · 02</small>Matriz Esfuerzo × Impacto</a><a class="ix" href="index.html">Índice</a><a class="nx" href="sipoc-as-is-to-be.html"><small>Siguiente · 04 →</small>SIPOC y As-Is → To-Be</a></nav></body></html>

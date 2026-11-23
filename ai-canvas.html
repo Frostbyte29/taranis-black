@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Canvas Taranis Black</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: informe de consultoría para una CEO; seco, preciso, sin adornos.
+IDEA: una hoja de horarios suiza: cada caso es una "parada" de la cadena del pedido al cierre.
+PICTURE: la cadena de 5 eslabones y las 5 líneas de sobrecosto como barras, con el caso que ataca cada una.
+COLOUR and TYPE: blanco, negro, rojo señal #e4002b, un gris; Archivo ancho 112 peso 800 + Archivo.
+LAYOUT: borde izquierdo estricto, numerales enormes en la columna izquierda, regla superior gruesa.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#0b0b0b,#f2f2f2);--grey:light-dark(#666,#a3a3a3);--line:light-dark(#d6d6d6,#2e2e2e);--soft:light-dark(#f3f3f3,#181818);--red:#e4002b}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,4.6vw,52px);max-width:22ch}
+h2{font-size:clamp(24px,2.6vw,32px)}
+h3{font-size:20px;font-stretch:100%}
+.rule{border-top:8px solid var(--ink)}
+.meta{color:var(--grey);font-size:14px;margin:14px 0 0}
+.lede{font-size:17px;max-width:68ch;margin:18px 0 0}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:28px}
+.kpis div{padding:14px 16px 4px 0;border-right:1px solid var(--line)}
+.kpis div:last-child{border-right:0}
+.kpis b{display:block;font-stretch:112%;font-weight:800;font-size:clamp(22px,2.4vw,30px);white-space:nowrap}
+.kpis b.r{color:var(--red)}
+.kpis span{font-size:14px;color:var(--grey)}
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:36px;border-top:3px solid var(--ink)}
+.chain div{padding:12px 10px 12px 0;position:relative}
+.chain div::before{content:"";position:absolute;top:-9px;left:0;width:15px;height:15px;border-radius:50%;background:var(--bg);border:3px solid var(--ink)}
+.chain div.on::before{background:var(--red);border-color:var(--red)}
+.chain b{display:block;font-size:15px}
+.chain span{font-size:13px;color:var(--grey)}
+.bars{margin-top:22px}
+.bar{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) 4.5rem;gap:14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.bar .lab{font-size:15px}
+.bar .lab small{display:block;color:var(--grey);font-size:13px}
+.track{height:22px;background:var(--soft);position:relative}
+.fill{height:100%;background:var(--ink);display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.fill.part{background:linear-gradient(90deg,var(--ink) 32.7%,var(--grey) 32.7%)}
+.tag{font-size:12px;font-weight:700;color:var(--bg);white-space:nowrap}
+.bar .v{text-align:right;font-weight:700;white-space:nowrap}
+.note{font-size:13px;color:var(--grey);margin:10px 0 0;max-width:80ch}
+.case{display:grid;grid-template-columns:clamp(64px,10vw,140px) minmax(0,1fr);gap:clamp(12px,2vw,28px);border-top:3px solid var(--ink);padding-top:22px;margin-top:44px}
+.num{font-stretch:112%;font-weight:800;font-size:clamp(64px,10vw,140px);line-height:.82;color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.chip{border:1.5px solid var(--ink);padding:2px 10px;font-size:13px;font-weight:600}
+.chip.r{border-color:var(--red);color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);margin-top:18px}
+.cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 14px 14px}
+.cell h4{margin:0 0 6px;font-size:13px;font-weight:700;display:flex;gap:8px}
+.cell h4 i{font-style:normal;color:var(--red)}
+.cell p{margin:0;font-size:15px;line-height:1.45}
+.cell.k{background:var(--soft)}
+.mand{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;margin-top:0;border:1px solid var(--line);border-top:0}
+.mand p{margin:0;padding:12px 14px;font-size:15px}
+.mand p+p{border-left:1px solid var(--line)}
+.mand b{display:block;font-size:13px}
+table{width:100%;border-collapse:collapse;margin-top:18px;font-size:15px}
+th,td{text-align:left;padding:10px 10px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;border-bottom:2px solid var(--ink)}
+.prompt{margin-top:16px;background:var(--soft);border-left:6px solid var(--ink)}
+.prompt pre{margin:0;padding:18px;white-space:pre-wrap;font:14px/1.5 Archivo,system-ui,sans-serif;max-height:420px;overflow:auto}
+button{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 18px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-top:12px}
+button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+ul.h{margin:12px 0 0;padding-left:20px;max-width:80ch}
+ul.h li{margin:4px 0}
+footer{color:var(--grey);font-size:13px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis div:nth-child(2){border-right:0}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0}.stack td::before{content:attr(data-l);font-weight:700;color:var(--grey)}.stack tr{border-bottom:1px solid var(--line)}
+.grid{grid-template-columns:minmax(0,1fr)}.case{grid-template-columns:minmax(0,1fr)}.num{font-size:64px}.mand{grid-template-columns:minmax(0,1fr)}.mand p+p{border-left:0;border-top:1px solid var(--line)}
+.chain{grid-template-columns:minmax(0,1fr);border-top:0;border-left:3px solid var(--ink);margin-left:8px}.chain div{padding:8px 0 8px 18px}.chain div::before{top:12px;left:-9px}
+.bar{grid-template-columns:minmax(0,1fr) 4rem}.bar .track{grid-column:1/-1;grid-row:2}}
+@media(prefers-reduced-motion:no-preference){.fill{animation:grow .9s ease-out both}@keyframes grow{from{transform:scaleX(0);transform-origin:left}}}
+</style>
+<style id="tbnav-css">
+.tbnav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px);font:600 13px/1.3 Archivo,system-ui,sans-serif;color:var(--grey);border-bottom:1px solid var(--line);background:var(--bg)}
+.tbnav a{color:var(--ink);text-decoration:none}.tbnav a:hover{color:var(--red)}
+.tbnav .pos{font-stretch:112%;font-weight:800;color:var(--red)}
+.tbnav-foot{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:22px max(5vw,16px) 40px;border-top:3px solid var(--ink);margin-top:8px;font:600 15px/1.3 Archivo,system-ui,sans-serif}
+.tbnav-foot a{color:var(--ink);text-decoration:none}.tbnav-foot a:hover{color:var(--red)}
+.tbnav-foot small{display:block;color:var(--grey);font-size:12px;font-weight:600}
+.tbnav-foot .nx{text-align:right}.tbnav-foot .ix{text-align:center;color:var(--red)}
+@media print{.tbnav,.tbnav-foot{display:none}}
+</style></head>
+<body><nav class="tbnav" aria-label="Navegación de evidencias"><a href="index.html">← Taranis Black · Evidencias</a><span><span class="pos">01 / 06</span> · AI Canvas · R0 · Etapa 1</span><span><a href="matriz-esfuerzo-impacto.html">Siguiente →</a></span></nav>
+<header class="band rule"><div class="wrap">
+<h1>Cuatro casos de IA, uno por eslabón del pedido al cierre</h1>
+<p class="meta">AI Canvas · Taranis Black · Ruta 0, Etapa 1 · Challenge ONE AI for Business G11 · Carlos Hurtado Rojas · noviembre de 2026</p>
+<p class="lede">El EBITDA real quedó USD 4,08 millones por debajo del presupuesto. El 85 % de ese hueco se explica por cinco líneas de sobrecosto del flujo B2B, que es el 70 % de los ingresos. Cada caso de uso ataca un eslabón de esa cadena y responde al mandato de la dirección: no contratar para tareas repetitivas y capacitar a los líderes para decidir con datos.</p>
+<div class="kpis">
+<div><b class="r">−USD 4,08 M</b><span>EBITDA real vs presupuesto (−41,4 %)</span></div>
+<div><b>USD 3,48 M</b><span>sobrecosto en 5 líneas operativas (85 % del hueco)</span></div>
+<div><b>&gt;5 días</b><span>de la firma al despacho; meta: 24 h útiles</span></div>
+<div><b>120–147 h</b><span>al mes en consulta de crédito y copia de datos (derivado)</span></div>
+</div>
+
+<div class="chain" aria-label="Cadena del pedido al cierre">
+<div class="on"><b>Pedido</b><span>CU1 · validación en origen</span></div>
+<div class="on"><b>Crédito</b><span>CU2 · matriz de alzada</span></div>
+<div class="on"><b>Facturación y despacho</b><span>CU1 · NF-e sin redigitar</span></div>
+<div class="on"><b>Cobranza</b><span>CU3 · prevención por riesgo</span></div>
+<div class="on"><b>Cierre</b><span>CU4 · conciliación asistida</span></div>
+</div>
+
+<div class="bars" aria-label="Sobrecosto real frente al presupuesto por línea y caso que la ataca">
+<div class="bar"><div class="lab">Fletes y logística<small>CU1 · USD 445.000 de estos fletes (lectura B); el resto en gris, sin causa</small></div><div class="track"><div class="fill part" style="width:100%"><span class="tag">CU1</span></div></div><div class="v">+1,36 M</div></div>
+<div class="bar"><div class="lab">Cancelaciones por retraso<small>CU2</small></div><div class="track"><div class="fill" style="width:49.6%"><span class="tag">CU2</span></div></div><div class="v">+0,675 M</div></div>
+<div class="bar"><div class="lab">Provisión por inadimplencia<small>CU3</small></div><div class="track"><div class="fill" style="width:49.3%"><span class="tag">CU3</span></div></div><div class="v">+0,67 M</div></div>
+<div class="bar"><div class="lab">Reentregas y multas<small>CU1</small></div><div class="track"><div class="fill" style="width:37.9%"><span class="tag">CU1</span></div></div><div class="v">+0,515 M</div></div>
+<div class="bar"><div class="lab">Gastos administrativos y legados<small>CU4</small></div><div class="track"><div class="fill" style="width:19.1%"><span class="tag">CU4</span></div></div><div class="v">+0,26 M</div></div>
+</div>
+<p class="note">Fuente: kit 05, hoja Resultados_trimestrales, real anual menos presupuesto anual (USD). En gris, los ~USD 0,915 M de fletes sin causa asignada (lectura decidida en la Etapa 2: los USD 960.000 cubren reentregas y parte de los fletes; si contabilidad confirma que están solo en fletes, la parte sin causa baja a ~USD 0,40 M). No se asignan a ningún caso. Las cifras de la hoja Cuellos_de_botella (USD 960.000 de fletes y reentregas; USD 180.000 del cierre) se tratan como contenidas en estas líneas y no se suman.</p>
+</div></header>
+
+<main class="band" style="padding-top:0"><div class="wrap">
+
+<section class="case" id="cu1">
+<div class="num">1</div>
+<div>
+<h2>Validación del pedido en origen</h2>
+<div class="chips"><span class="chip r">Generativa + Tradicional</span><span class="chip">Eslabón: pedido, facturación y despacho</span><span class="chip">Pasos 1, 2 y 5 del flujo</span></div>
+<div class="grid">
+<div class="cell"><h4><i>1</i>Problema</h4><p>El vendedor envía el PDF firmado por correo sin validar stock, crédito ni CNPJ. Finanzas copia los datos a mano al ERP y a la NF-e; los errores de código de producto, IE y CIF/FOB terminan en reentregas, fletes duplicados y boletos divergentes.</p></div>
+<div class="cell"><h4><i>2</i>Dato de entrada</h4><p>PDF de la propuesta (digital o escaneada), catálogo, tabla de precios, registro de CNPJ/IE y condición de flete. Hoy están dispersos entre el ERP y hojas locales; la tabla de precios debe consolidarse en una sola.</p></div>
+<div class="cell"><h4><i>3</i>Generación</h4><p>Un modelo de lenguaje extrae los campos del pedido con un nivel de confianza por campo. Reglas los contrastan con catálogo, precios, registro del cliente y condición de flete.</p></div>
+<div class="cell"><h4><i>4</i>Decisión que habilita</h4><p>El vendedor corrige en minutos lo que no cuadra antes de enviar; el asistente confirma un pedido ya validado en lugar de reconstruirlo.</p></div>
+<div class="cell"><h4><i>5</i>Acción</h4><p>El pedido validado alimenta el borrador de NF-e y la orden al CD de Joinville sin redigitación. Las diferencias de precio con el ERP se reportan para corregir el registro maestro.</p></div>
+<div class="cell k"><h4><i>6</i>Resultado medible</h4><p>Boletos con divergencia: 6,8 % → &lt;0,5 % de las NF-e. Fletes de emergencia: 2,8 % → 0,8 % de la facturación. Ataca USD 960.000 (lectura B): USD 445.000 de fletes y los USD 515.000 de reentregas; el kit atribuye USD 960.000 al año a errores de transposición.</p></div>
+<div class="cell k"><h4><i>7</i>Supervisión humana</h4><p>En el ciclo, en dos pasos: el vendedor confirma los campos de baja confianza y el asistente valida cada pedido antes de emitir la NF-e. Pasa a muestreo solo tras 3 meses con divergencia &lt;0,5 % (SUPUESTO).</p></div>
+<div class="cell"><h4><i>8</i>Riesgo y mitigación</h4><p>Lectura errónea de PDF escaneados y envío de datos de contactos a un proveedor externo. Umbral de confianza, doble validación y proveedor con acuerdo de tratamiento de datos (LGPD). Sin API en el ERP: la v1 entrega un registro validado para carga asistida.</p></div>
+</div>
+<div class="mand"><p><b>Mandato de la CEO</b>Elimina la redigitación manual y ayuda a vender mejor: el pedido sale correcto a la primera.</p><p><b>Rol nuevo del líder</b>El liderazgo comercial gestiona la calidad del pedido por vendedor y es dueño, junto con finanzas, de la tabla de precios única.</p></div>
+</div>
+</section>
+
+<section class="case" id="cu2">
+<div class="num">2</div>
+<div>
+<h2>Aprobación de crédito por matriz de alzada</h2>
+<div class="chips"><span class="chip r">v1: Tradicional + Generativa</span><span class="chip r">v2: + Predictiva</span><span class="chip">Eslabón: crédito</span><span class="chip">Pasos 2, 3 y 4</span></div>
+<div class="grid">
+<div class="cell"><h4><i>1</i>Problema</h4><p>Todo pedido, incluso uno de USD 8.000 de un cliente antiguo, espera la aprobación individual del gerente financiero: 24 a 48 horas útiles, presión por WhatsApp y pedidos cancelados.</p></div>
+<div class="cell"><h4><i>2</i>Dato de entrada</h4><p>Historial de compras y pagos del cliente (exportado del ERP), score y pendencias en Serasa Experian, límite vigente en Controle_Limites_2026.xlsx, monto y condición de pago del pedido.</p></div>
+<div class="cell"><h4><i>3</i>Predicción o generación</h4><p>v1: reglas de alzada clasifican el pedido en autoaprobado, revisión del analista o decisión del gerente; un modelo de lenguaje resume cada excepción en una página. v2: se suma la probabilidad de mora del modelo de CU3.</p></div>
+<div class="cell"><h4><i>4</i>Decisión que habilita</h4><p>Los pedidos de clientes recurrentes, dentro de su límite y sin deterioro en Serasa, se liberan solos. El gerente decide solo excepciones y aumentos de límite.</p></div>
+<div class="cell"><h4><i>5</i>Acción</h4><p>Liberación inmediata a facturación. Las excepciones llegan al gerente priorizadas por monto y urgencia, con resumen y recomendación.</p></div>
+<div class="cell k"><h4><i>6</i>Resultado medible</h4><p>Homologación de crédito: 48 h → ≤4 h. Ataca las cancelaciones por retraso (+USD 675.000 sobre el presupuesto; el kit estima USD 1,25 M al año en pedidos cancelados, monto total que no se usa para el retorno).</p></div>
+<div class="cell k"><h4><i>7</i>Supervisión humana</h4><p>Sobre el ciclo en autoaprobaciones: muestreo semanal y revisión de umbrales. En el ciclo para todo rechazo, aumento de límite o monto sobre el umbral. Ningún rechazo es automático.</p></div>
+<div class="cell"><h4><i>8</i>Riesgo y mitigación</h4><p>Autoaprobar a un cliente que se deteriora; sesgo contra empresas nuevas o pequeñas. Consulta a Serasa en cada pedido, umbrales conservadores (se calibran en la Etapa 2), clientes nuevos siempre a revisión humana y derecho a revisión (art. 20 LGPD) cuando intervienen personas naturales.</p></div>
+</div>
+<div class="mand"><p><b>Mandato de la CEO</b>Permite sostener un crecimiento del 35 % anual sin sumar aprobadores.</p><p><b>Rol nuevo del líder</b>El gerente financiero deja de aprobar pedido por pedido y pasa a diseñar y ajustar la política de alzada con datos.</p></div>
+</div>
+</section>
+
+<section class="case" id="cu3">
+<div class="num">3</div>
+<div>
+<h2>Cobranza preventiva por riesgo</h2>
+<div class="chips"><span class="chip r">Predictiva + Generativa</span><span class="chip">Eslabón: cobranza</span><span class="chip">Su modelo se reutiliza en CU2 v2</span></div>
+<div class="grid">
+<div class="cell"><h4><i>1</i>Problema</h4><p>Los recordatorios de cobro se envían a mano por correo, sin priorizar por riesgo. La inadimplencia B2B a más de 90 días casi triplica la meta.</p></div>
+<div class="cell"><h4><i>2</i>Dato de entrada</h4><p>Historial de boletos emitidos y pagados por cliente (exportable del ERP: SUPUESTO, ya que el kit mide la inadimplencia a 90 días), score Serasa y plantillas aprobadas por finanzas.</p></div>
+<div class="cell"><h4><i>3</i>Predicción o generación</h4><p>Un modelo predice la probabilidad de atraso por cliente y boleto. Un modelo de lenguaje personaliza el recordatorio dentro de las plantillas aprobadas.</p></div>
+<div class="cell"><h4><i>4</i>Decisión que habilita</h4><p>Finanzas decide a quién contactar primero, por qué canal y con qué tono, antes del vencimiento.</p></div>
+<div class="cell"><h4><i>5</i>Acción</h4><p>Recordatorios preventivos automáticos para el riesgo bajo. Las cuentas de riesgo alto pasan a gestión personal con un borrador listo.</p></div>
+<div class="cell k"><h4><i>6</i>Resultado medible</h4><p>Inadimplencia B2B a más de 90 días: 3,4 % → 1,2 % (meta del kit; la base de cálculo se fija en la Etapa 2). Ataca la provisión por inadimplencia (+USD 670.000 sobre el presupuesto).</p></div>
+<div class="cell k"><h4><i>7</i>Supervisión humana</h4><p>Sobre el ciclo en recordatorios preventivos: plantillas cerradas y auditoría mensual de tono. En el ciclo en riesgo alto: toda negociación, prórroga o condonación es humana.</p></div>
+<div class="cell"><h4><i>8</i>Riesgo y mitigación</h4><p>Presión desigual entre clientes y un modelo que castigue segmentos (empresas jóvenes, regiones). Plantillas cerradas, monitoreo de resultados por segmento y ninguna sanción automática.</p></div>
+</div>
+<div class="mand"><p><b>Mandato de la CEO</b>Elimina el envío manual de recordatorios y concentra al equipo en las cuentas que de verdad están en riesgo.</p><p><b>Rol nuevo del líder</b>El responsable de cuentas por cobrar gestiona la cartera por riesgo y aprueba las plantillas que usa la IA.</p></div>
+</div>
+</section>
+
+<section class="case" id="cu4">
+<div class="num">4</div>
+<div>
+<h2>Conciliación asistida para el cierre</h2>
+<div class="chips"><span class="chip r">Tradicional + Generativa</span><span class="chip">Eslabón: cierre contable</span></div>
+<div class="grid">
+<div class="cell"><h4><i>1</i>Problema</h4><p>La conciliación se hace copiando datos a mano entre 3 hojas de cálculo y el ERP legado. El cierre tarda 7 días hábiles y la dirección descubre los desvíos a fin de mes.</p></div>
+<div class="cell"><h4><i>2</i>Dato de entrada</h4><p>Exportaciones del ERP (NF-e, boletos, pagos), extractos bancarios y las hojas de control de crédito, precios y fletes.</p></div>
+<div class="cell"><h4><i>3</i>Generación</h4><p>Reglas de emparejamiento cruzan NF-e, boleto, pago y flete. Un modelo de lenguaje explica cada excepción en lenguaje claro y propone el ajuste contable.</p></div>
+<div class="cell"><h4><i>4</i>Decisión que habilita</h4><p>El controller decide solo sobre las excepciones, no sobre cada registro.</p></div>
+<div class="cell"><h4><i>5</i>Acción</h4><p>Los ajustes aprobados se registran y un reporte diario de excepciones abiertas evita acumular el trabajo a fin de mes.</p></div>
+<div class="cell k"><h4><i>6</i>Resultado medible</h4><p>Cierre: 7 → 2 días hábiles. Ataca gastos administrativos y sistemas legados (+USD 260.000); el kit estima USD 180.000 al año en horas extra y auditorías por el retraso, tratados como contenidos en esa línea.</p></div>
+<div class="cell k"><h4><i>7</i>Supervisión humana</h4><p>En el ciclo: ningún ajuste contable se registra sin aprobación del controller. Sobre el ciclo: muestreo de emparejamientos automáticos en cada cierre.</p></div>
+<div class="cell"><h4><i>8</i>Riesgo y mitigación</h4><p>Un emparejamiento falso que oculte un error y la dependencia de exportaciones manuales. Reglas conservadoras, bitácora de cada emparejamiento y cuadre de saldos totales como control.</p></div>
+</div>
+<div class="mand"><p><b>Mandato de la CEO</b>Retira la copia manual entre hojas y entrega a la dirección números a tiempo para decidir.</p><p><b>Rol nuevo del líder</b>El controller supervisa excepciones y firma el cierre en 2 días.</p></div>
+</div>
+</section>
+
+<section style="margin-top:56px" class="rule">
+<h2 style="margin-top:22px">Resumen</h2>
+<table class="stack">
+<thead><tr><th>Caso</th><th>Tipo de IA</th><th>Línea de sobrecosto (USD)</th><th>KPI meta</th><th>Supervisión</th></tr></thead>
+<tbody>
+<tr><td data-l="Caso">CU1 · Validación en origen</td><td data-l="Tipo">Generativa + Tradicional</td><td data-l="Línea">Fletes 0,445 M de 1,36 M · Reentregas +0,515 M</td><td data-l="KPI">Divergencia &lt;0,5 % de NF-e</td><td data-l="Supervisión">En el ciclo, dos pasos</td></tr>
+<tr><td data-l="Caso">CU2 · Matriz de alzada</td><td data-l="Tipo">Tradicional + Generativa → Predictiva</td><td data-l="Línea">Cancelaciones +0,675 M</td><td data-l="KPI">Crédito ≤4 h</td><td data-l="Supervisión">Sobre el ciclo; rechazos en el ciclo</td></tr>
+<tr><td data-l="Caso">CU3 · Cobranza preventiva</td><td data-l="Tipo">Predictiva + Generativa</td><td data-l="Línea">Provisión +0,67 M</td><td data-l="KPI">Inadimplencia &gt;90 d 1,2 %</td><td data-l="Supervisión">Sobre el ciclo; riesgo alto en el ciclo</td></tr>
+<tr><td data-l="Caso">CU4 · Conciliación asistida</td><td data-l="Tipo">Tradicional + Generativa</td><td data-l="Línea">Administrativos y legados +0,26 M</td><td data-l="KPI">Cierre en 2 días</td><td data-l="Supervisión">En el ciclo en ajustes</td></tr>
+</tbody>
+</table>
+<p class="note">Fuera de esta etapa: ventas, marketing y personas quedan en cartera para una segunda ola. El panel de SLA por etapa es un habilitador de medición y se evalúa en la matriz de priorización.</p>
+</section>
+
+<section style="margin-top:56px" class="rule">
+<h2 style="margin-top:22px">Supervisión humana del consultor</h2>
+<p class="lede" style="margin-top:10px">Decisiones que la IA propuso y el consultor validó o cambió:</p>
+<ul class="h">
+<li>Se amplió de 3 a 4 casos, para cubrir la conciliación del cierre, que es el problema central de la Ruta 4.</li>
+<li>En CU1, el consultor reemplazó la validación solo del vendedor por una validación en dos pasos (vendedor y asistente) hasta que la tasa de divergencia se estabilice.</li>
+<li>CU2 se clasifica por fases: reglas en v1 y modelo predictivo propio en v2, compartido con CU3.</li>
+<li>Se añadieron al prompt las reglas de no sumar cifras de la hoja de cuellos de botella con las del estado de resultados y de no asignar el sobrecosto de fletes sin causa demostrada.</li>
+</ul>
+</section>
+
+<section style="margin-top:56px" class="rule">
+<h2 style="margin-top:22px">Prompt utilizado</h2>
+<div class="prompt"><pre id="p">ROL: Eres consultor senior de IA aplicada a finanzas y operaciones. Asesoras a la CEO de Taranis Black (muebles ergonómicos corporativos; operación en Brasil; 280 colaboradores; crecimiento >35 % anual).
+
+MANDATO DE LA CEO (filtro obligatorio): "Taranis Black no contratará más personas solo para realizar tareas repetitivas. Queremos capacitar a nuestros líderes en IA para escalar, vender mejor y tomar decisiones basadas en datos."
+
+CONTEXTO — flujo B2B del pedido al cierre (70 % de los ingresos, USD 33,6 millones/año; 180–220 pedidos/mes; meta ≤24 h útiles de la firma al despacho; real >5 días útiles):
+1. El vendedor envía el PDF firmado por correo a finanzas, sin validar stock, crédito ni CNPJ.
+2. El asistente cruza el ERP legado (sin API), el portal Serasa y Controle_Limites_2026.xlsx: 40 min por pedido.
+3–4. Toda aprobación de crédito pasa por el gerente financiero, incluso pedidos de USD 8.000 de clientes antiguos; la espera es de 24–48 h.
+5. La NF-e se digita a mano (errores de código de producto y de IE); la orden al CD de Joinville va por correo; las divergencias CIF/FOB retienen el camión.
+Cierre contable: conciliación manual entre 3 hojas de cálculo y el ERP.
+
+DATOS (kit 05, anual, USD):
+- EBITDA real 5,77 M vs presupuesto 9,848 M (−4,078 M).
+- Sobrecosto vs presupuesto (P&L): fletes y logística +1,36 M; cancelaciones por retraso logístico +0,675 M; provisión por inadimplencia +0,67 M; reentregas y multas por divergencia +0,515 M; gastos administrativos y sistemas legados +0,26 M. Total +3,48 M (85 % del hueco).
+- Benchmarks (hoja Cuellos_de_botella): cierre 7 días vs meta 2 (USD 180.000/año); homologación de crédito 48 h vs máx. 4 h (USD 1,25 M/año en pedidos cancelados, monto total); reentregas y fletes de emergencia 2,8 % vs techo 0,8 % de la facturación (USD 960.000/año, causa: transposición manual); boletos con divergencia 6,8 % vs <0,5 % de las NF-e (USD 390.000/año, causa: tabla de precios comercial ≠ ERP); inadimplencia >90 días 3,4 % vs 1,2 % (USD 1,11 M/año, monto total).
+
+CASOS VALIDADOS:
+- CU1 · Validación del pedido en origen: un modelo de lenguaje extrae los datos del PDF firmado y reglas los validan contra catálogo, tabla de precios única, CNPJ/IE y condición CIF/FOB. Supervisión en dos pasos: el vendedor confirma los campos de baja confianza y el asistente financiero valida cada pedido antes de emitir la NF-e.
+- CU2 · Aprobación de crédito por matriz de alzada: v1 con reglas de alzada y score Serasa (tradicional) más un resumen generado de cada excepción para el gerente; v2 incorpora el modelo propio de riesgo de mora de CU3.
+- CU3 · Cobranza preventiva por riesgo: modelo predictivo de probabilidad de atraso por cliente y boleto, y recordatorios generados dentro de plantillas aprobadas. Es el modelo que CU2 reutiliza en v2.
+- CU4 · Conciliación asistida para el cierre: reglas de emparejamiento entre ERP, boletos, pagos y fletes, y explicación generada de cada excepción con propuesta de ajuste para el controller.
+
+TAREA: Construye un AI Canvas para cada caso. Por caso, completa 8 bloques:
+1. Problema (y el paso del flujo donde ocurre)
+2. Dato de entrada (fuente concreta; si hoy existe o no)
+3. Predicción o generación (qué produce la IA, exactamente)
+4. Decisión que habilita (quién decide qué, distinto de hoy)
+5. Acción (qué pasa en el proceso después de la decisión)
+6. Resultado medible (KPI actual → meta y la línea de sobrecosto que ataca, con su cifra)
+7. Supervisión humana (humano en el ciclo / sobre el ciclo: quién, en qué punto y por qué)
+8. Riesgo principal y su mitigación
+Agrega por caso: tipo de IA (Generativa / Predictiva / Tradicional o combinación) con una línea de justificación técnica, y una línea sobre cómo cumple el mandato de la CEO que incluya el rol nuevo que asume el líder del área.
+
+RESTRICCIONES:
+- Cada cifra se rastrea a una línea de DATOS o se declara como "SUPUESTO: valor, base". No inventes números.
+- Usa excedentes vs presupuesto, no montos totales. Cada línea de sobrecosto se asigna a un solo caso; si un monto se comparte, decláralo.
+- No sumes cifras de la hoja Cuellos_de_botella con las del P&L sin declarar si se solapan: los USD 960.000 de reentregas y fletes de emergencia frente a las líneas de fletes y de reentregas del P&L; los USD 180.000 del cierre frente al +0,26 M de gastos administrativos y sistemas legados.
+- Los ~0,40 M de sobrecosto de fletes no explicados por los USD 960.000 no se asignan a ningún caso, salvo que se justifique como SUPUESTO.
+- El ERP no tiene API: indica qué caso depende de integrarse con él.
+- Ninguna decisión desfavorable para un cliente (rechazo de crédito, bloqueo) queda totalmente automatizada.
+- Español neutro profesional, frases cortas, comprensible para la CEO en 2 minutos.
+
+FORMATO: una tarjeta por caso con los 8 bloques etiquetados y, al final, una tabla resumen: Caso · Tipo de IA · Línea de sobrecosto · KPI meta · Nivel de supervisión.</pre></div>
+<button type="button" id="cp">Copiar prompt</button>
+</section>
+
+<footer style="margin-top:48px;border-top:1px solid var(--line);padding-top:14px">Elaborado por Carlos Hurtado Rojas. Cifras del kit de datos del challenge (archivo 05 y documento 06); los supuestos se declaran como tales.</footer>
+</div></main>
+<script>
+{
+  const b=document.getElementById('cp');
+  b.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(document.getElementById('p').innerText);b.textContent='Copiado';}
+    catch(e){b.textContent='Selecciona el texto y copia';}
+    setTimeout(()=>{b.textContent='Copiar prompt';},2200);
+  });
+}
+</script>
+<nav class="tbnav-foot" aria-label="Anterior y siguiente"><span></span><a class="ix" href="index.html">Índice</a><a class="nx" href="matriz-esfuerzo-impacto.html"><small>Siguiente · 02 →</small>Matriz Esfuerzo × Impacto</a></nav></body>
+</html>

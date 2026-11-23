@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIPOC y flujo As-Is → To-Be — Taranis Black</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: informe de consultoría para una CEO; seco, preciso, sin adornos (misma familia que el AI Canvas de la Etapa 1).
+IDEA: una hoja de ruta de un pedido: seis paradas de izquierda a derecha, con el reloj que el kit mide y el que no.
+PICTURE: la barra del ciclo (2 días medidos, 3 sin reloj) y la matriz SIPOC traspuesta, seis pasos en columnas.
+COLOUR and TYPE: blanco, negro, rojo señal #e4002b, un gris; Archivo ancho 112 peso 800 + Archivo.
+LAYOUT: borde izquierdo estricto, regla superior gruesa, matriz a todo el ancho en una captura.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#0b0b0b,#f2f2f2);--grey:light-dark(#666,#a3a3a3);--line:light-dark(#d6d6d6,#2e2e2e);--soft:light-dark(#f3f3f3,#181818);--red:#e4002b}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,56px) max(4vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2{font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,4.2vw,48px);max-width:24ch}
+h2{font-size:clamp(22px,2.4vw,30px);margin-top:22px}
+.rule{border-top:8px solid var(--ink)}
+.meta{color:var(--grey);font-size:14px;margin:12px 0 0}
+.lede{font-size:17px;max-width:72ch;margin:14px 0 0}
+.cycle{margin-top:26px}
+.cbar{display:grid;grid-template-columns:2fr 3fr .4fr;height:44px;border:2px solid var(--ink)}
+.cbar div{display:flex;align-items:center;padding:0 10px;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden}
+.cbar .m{background:var(--red);color:#fff}
+.cbar .u{background:repeating-linear-gradient(135deg,var(--soft) 0 8px,var(--line) 8px 10px);color:var(--ink)}
+.cbar .x{background:var(--soft);justify-content:center;color:var(--grey)}
+.sh{display:none}
+.cscale{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr .4fr;font-size:13px;color:var(--grey);margin-top:4px}
+.cscale span{border-left:1px solid var(--line);padding-left:4px}
+.goal{display:flex;gap:10px;align-items:center;font-size:14px;margin-top:8px}
+.goal i{display:inline-block;width:20%;max-width:240px;height:10px;background:var(--ink)}
+.scroll{overflow-x:auto;margin-top:18px}
+.sipoc{display:grid;grid-template-columns:118px repeat(6,minmax(150px,1fr));min-width:1060px;border-top:3px solid var(--ink)}
+.sipoc>div{padding:8px 9px;border-bottom:1px solid var(--line);font-size:13px;line-height:1.38}
+.sipoc .rh{font-weight:800;font-size:13px;border-right:1px solid var(--line)}
+.sipoc .rh small{display:block;font-weight:400;color:var(--grey)}
+.sipoc .st{font-weight:800;font-size:14px;background:var(--ink);color:var(--bg);border-right:1px solid var(--bg);position:relative}
+.sipoc .st b{color:var(--red);font-size:22px;font-stretch:112%;margin-right:6px}
+.sipoc .kpi{background:var(--soft)}
+.sipoc .nm{color:var(--grey);font-style:italic}
+.sipoc .hot{color:var(--red);font-weight:700}
+.w{display:inline-block;border:1.5px solid var(--ink);padding:0 6px;margin:0 3px 3px 0;font-size:12px;font-weight:600}
+.w.e{border-color:var(--red);color:var(--red)}
+.note{font-size:13px;color:var(--grey);margin:10px 0 0;max-width:90ch}
+figure{margin:18px 0 0}
+figure svg{width:100%;height:auto;display:block;color:var(--ink)}
+figcaption{font-size:13px;color:var(--grey);margin-top:8px;max-width:90ch}
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;border-bottom:2px solid var(--ink)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 7px;border:1.5px solid var(--ink);white-space:nowrap}
+.tag.ia{background:var(--red);border-color:var(--red);color:#fff}
+.tag.v2{border-style:dashed}
+ul.h{margin:12px 0 0;padding-left:20px;max-width:86ch}
+ul.h li{margin:5px 0}
+.prompt{margin-top:16px;background:var(--soft);border-left:6px solid var(--ink)}
+.prompt pre{margin:0;padding:18px;white-space:pre-wrap;font:14px/1.5 Archivo,system-ui,sans-serif;max-height:420px;overflow:auto}
+button{font:600 15px Archivo,system-ui,sans-serif;min-height:44px;padding:0 18px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;margin-top:12px}
+button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+footer{color:var(--grey);font-size:13px}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0}.stack td::before{content:attr(data-l);font-weight:700;color:var(--grey);flex:0 0 38%}
+.cbar div{font-size:12px;padding:0 6px}.lg{display:none}.sh{display:inline}.cbar .x{display:none}.cbar{grid-template-columns:2fr 3fr}.cscale{display:none}}
+@media(prefers-reduced-motion:no-preference){.cbar .m{animation:grow .8s ease-out both}@keyframes grow{from{transform:scaleX(0);transform-origin:left}}}
+</style>
+<style id="tbnav-css">
+.tbnav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px);font:600 13px/1.3 Archivo,system-ui,sans-serif;color:var(--grey);border-bottom:1px solid var(--line);background:var(--bg)}
+.tbnav a{color:var(--ink);text-decoration:none}.tbnav a:hover{color:var(--red)}
+.tbnav .pos{font-stretch:112%;font-weight:800;color:var(--red)}
+.tbnav-foot{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:22px max(5vw,16px) 40px;border-top:3px solid var(--ink);margin-top:8px;font:600 15px/1.3 Archivo,system-ui,sans-serif}
+.tbnav-foot a{color:var(--ink);text-decoration:none}.tbnav-foot a:hover{color:var(--red)}
+.tbnav-foot small{display:block;color:var(--grey);font-size:12px;font-weight:600}
+.tbnav-foot .nx{text-align:right}.tbnav-foot .ix{text-align:center;color:var(--red)}
+@media print{.tbnav,.tbnav-foot{display:none}}
+</style></head>
+<body><nav class="tbnav" aria-label="Navegación de evidencias"><a href="index.html">← Taranis Black · Evidencias</a><span><span class="pos">04 / 06</span> · SIPOC y As-Is → To-Be · R4 · Etapa 1</span><span><a href="politica-ia-responsable.html">← Anterior</a> · <a href="ishikawa-6m.html">Siguiente →</a></span></nav>
+<header class="band rule"><div class="wrap">
+<h1>El pedido pasa 2 días en el crédito y otros 3 sin que nadie mida el reloj</h1>
+<p class="meta">Matriz SIPOC y flujo As-Is → To-Be · «Aprobación de pedidos, facturación y despacho» · Taranis Black · Ruta 4, Etapa 1 · Carlos Hurtado Rojas · noviembre de 2026</p>
+<p class="lede">Entre 180 y 220 pedidos corporativos al mes recorren seis pasos manuales unidos por tres correos. La meta es despachar en 24 horas útiles desde la firma; hoy se tarda más de 5 días útiles. El kit solo mide el tramo del crédito.</p>
+
+<div class="cycle" aria-label="Ciclo de la firma al despacho: 2 días medidos en crédito y al menos 3 días sin medir">
+<div class="cbar"><div class="m"><span class="lg">Crédito (pasos 2–4): 48 h · medido</span><span class="sh">Crédito: 2 días</span></div><div class="u"><span class="lg">Pasos 1, 5 y 6 y vueltas de retrabajo: ≥3 días · no medido en el kit</span><span class="sh">≥3 días sin medir</span></div><div class="x">+</div></div>
+<div class="cscale"><span>día 1</span><span>día 2</span><span>día 3</span><span>día 4</span><span>día 5</span><span>&gt;5</span></div>
+<p class="goal"><i></i>Meta directiva: 24 h útiles en total, menos que el tramo de crédito actual</p>
+</div>
+</div></header>
+
+<main class="band" style="padding-top:0"><div class="wrap">
+
+<section class="rule">
+<h2>Matriz SIPOC con métricas por paso</h2>
+<div class="scroll"><div class="sipoc" id="sipoc" role="table" aria-label="Matriz SIPOC traspuesta: seis pasos en columnas"></div></div>
+<p class="note">Tiempo de crédito: 48 h frente a una meta de ≤4 h (kit 05, hoja Cuellos_de_botella). 40 min por pedido × 180–220 pedidos = 120–147 h al mes (derivado del doc 06). Boletos: 6,8 % × 180–220 pedidos = unos 12–15 al mes (derivado; SUPUESTO: el porcentaje aplica a las NF-e B2B). Lectura de horas: 24 horas útiles = 1 día hábil, coherente con la meta de 24 h y con el ciclo de más de 5 días. En cursiva gris, lo que el kit no mide. Los KPI se miden en el panel de SLA.</p>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Flujo As-Is → To-Be</h2>
+<figure>
+<svg viewBox="0 0 1200 560" role="img" aria-label="Flujo actual de seis pasos con tres correos y dos vueltas de retrabajo, frente al flujo propuesto con formulario validado, cola con SLA, motor de alzada, carga asistida de NF-e y aviso automático al CD">
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e4002b"/></marker>
+</defs>
+<g font-family="Archivo,system-ui,sans-serif" fill="currentColor">
+<text x="0" y="22" font-size="18" font-weight="800">As-Is · hoy</text>
+<text x="1200" y="22" font-size="13" text-anchor="end" opacity=".65">más de 5 días útiles · 3 correos por pedido</text>
+<!-- As-Is boxes: x = 0,204,408,612,816,1020 ; w=176 -->
+<g fill="none" stroke="currentColor" stroke-width="2">
+<rect x="0" y="80" width="176" height="62"/><rect x="204" y="80" width="176" height="62"/><rect x="408" y="80" width="176" height="62"/>
+<rect x="612" y="80" width="176" height="62" stroke="#e4002b" stroke-width="3"/><rect x="816" y="80" width="176" height="62"/><rect x="1020" y="80" width="176" height="62"/>
+</g>
+<g font-size="13" font-weight="700">
+<text x="10" y="106">1 · Vendedor envía</text><text x="10" y="124" font-weight="400">PDF por correo</text>
+<text x="214" y="106">2 · Asistente revisa</text><text x="214" y="124" font-weight="400">ERP + Serasa + Excel</text>
+<text x="418" y="106">3 · Asistente pide</text><text x="418" y="124" font-weight="400">aprobación por correo</text>
+<text x="622" y="106">4 · Gerente decide</text><text x="622" y="124" font-weight="400">cada pedido</text>
+<text x="826" y="106">5 · Asistente digita</text><text x="826" y="124" font-weight="400">NF-e y boletos</text>
+<text x="1030" y="106">6 · Correo al CD</text><text x="1030" y="124" font-weight="400">separa y despacha</text>
+</g>
+<g stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)">
+<line x1="178" y1="111" x2="202" y2="111"/><line x1="382" y1="111" x2="406" y2="111"/><line x1="586" y1="111" x2="610" y2="111"/><line x1="790" y1="111" x2="814" y2="111"/><line x1="994" y1="111" x2="1018" y2="111"/>
+</g>
+<!-- rework loops -->
+<path d="M292 78 C292 48 88 48 88 76" fill="none" stroke="#e4002b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="190" y="46" font-size="12" text-anchor="middle" fill="#e4002b">devuelve por correo si algo no cuadra</text>
+<path d="M904 78 C880 50 928 50 912 76" fill="none" stroke="#e4002b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="904" y="46" font-size="12" text-anchor="middle" fill="#e4002b">reemite</text>
+<path d="M1108 78 C1084 50 1132 50 1116 76" fill="none" stroke="#e4002b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="1108" y="46" font-size="12" text-anchor="middle" fill="#e4002b">reentrega</text>
+<!-- metrics under boxes -->
+<g font-size="12">
+<text x="0" y="164" opacity=".65">picos de &gt;40 correos</text>
+<text x="204" y="164" font-weight="700">40 min por pedido</text>
+<text x="408" y="164" opacity=".65">no medido en el kit</text>
+<text x="612" y="164" font-weight="700" fill="#e4002b">24–48 h en bandeja</text>
+<text x="816" y="164" font-weight="700">6,8 % boletos divergentes</text>
+<text x="1020" y="164" font-weight="700">2,8 % reentregas y fletes</text>
+<text x="612" y="182" opacity=".65">restricción del flujo</text>
+<text x="816" y="182" opacity=".65">meta &lt;0,5 %</text>
+<text x="1020" y="182" opacity=".65">techo 0,8 %</text>
+</g>
+<line x1="0" y1="226" x2="1200" y2="226" stroke="currentColor" stroke-opacity=".25"/>
+
+<text x="0" y="262" font-size="18" font-weight="800">To-Be · propuesto</text>
+<text x="1200" y="262" font-size="13" text-anchor="end" opacity=".65">meta 24 h útiles · sin redigitar · cada etapa con dueño y reloj</text>
+<!-- To-Be boxes -->
+<g fill="none" stroke="currentColor" stroke-width="2">
+<rect x="0" y="330" width="176" height="70"/><rect x="204" y="330" width="176" height="70"/><rect x="408" y="330" width="176" height="70" stroke="#e4002b" stroke-width="3"/>
+<rect x="612" y="296" width="176" height="52"/><rect x="612" y="380" width="176" height="70"/>
+<rect x="816" y="330" width="176" height="70"/><rect x="1020" y="330" width="176" height="70"/>
+</g>
+<g font-size="13" font-weight="700">
+<text x="10" y="354">Formulario de pedido</text><text x="10" y="372" font-weight="400">campos obligatorios y</text><text x="10" y="389" font-weight="400">validación automática</text>
+<text x="214" y="354">Cola única con SLA</text><text x="214" y="372" font-weight="400">sello de tiempo y dueño</text><text x="214" y="389" font-weight="400">por etapa (panel)</text>
+<text x="418" y="354">Motor de alzada</text><text x="418" y="372" font-weight="400">Serasa + límite +</text><text x="418" y="389" font-weight="400">historial (CU2 v1)</text>
+<text x="622" y="318">Autoaprobado</text><text x="622" y="336" font-weight="400">recurrente, en su límite</text>
+<text x="622" y="402">Excepción al gerente</text><text x="622" y="420" font-weight="400">con resumen; ≤4 h</text><text x="622" y="437" font-weight="400">rechazo siempre humano</text>
+<text x="826" y="354">NF-e por carga</text><text x="826" y="372" font-weight="400">asistida desde el</text><text x="826" y="389" font-weight="400">registro validado</text>
+<text x="1030" y="354">Aviso al CD</text><text x="1030" y="372" font-weight="400">carga y CIF/FOB ya</text><text x="1030" y="389" font-weight="400">validados → despacho</text>
+</g>
+<g stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)" fill="none">
+<line x1="178" y1="365" x2="202" y2="365"/><line x1="382" y1="365" x2="406" y2="365"/>
+<path d="M586 352 L598 352 L598 322 L610 322"/><path d="M586 378 L598 378 L598 415 L610 415"/>
+<path d="M790 322 L802 322 L802 352 L814 352"/><path d="M790 415 L802 415 L802 378 L814 378"/>
+<line x1="994" y1="365" x2="1018" y2="365"/>
+</g>
+<path d="M88 402 C88 440 40 440 40 404" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+<text x="10" y="458" font-size="12">vuelve al vendedor en minutos, con el motivo</text>
+<!-- type tags -->
+<g font-size="11" font-weight="700">
+<rect x="0" y="300" width="58" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="7" y="314">REGLA</text>
+<rect x="64" y="300" width="94" height="20" fill="#e4002b"/><text x="70" y="314" fill="#fff">IA lee el PDF</text>
+<rect x="204" y="300" width="74" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="210" y="314">NO-CODE</text>
+<rect x="408" y="300" width="58" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="415" y="314">REGLA</text>
+<rect x="472" y="300" width="104" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><text x="478" y="314">v2: IA predictiva</text>
+<rect x="612" y="456" width="122" height="20" fill="#e4002b"/><text x="618" y="470" fill="#fff">IA redacta resumen</text>
+<rect x="816" y="300" width="132" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="822" y="314">REGLA · humano valida</text>
+<rect x="1020" y="300" width="74" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="1026" y="314">NO-CODE</text>
+</g>
+<g font-size="12" opacity=".75">
+<text x="0" y="510">Lo que desaparece: el correo con PDF (paso 1), el correo de solicitud (paso 3), la espera por pedidos de bajo riesgo (paso 4), la redigitación de la NF-e (paso 5)</text>
+<text x="0" y="530">y el tercer correo al CD (paso 6). La NF-e sigue cargándose con apoyo humano porque el ERP no tiene API.</text>
+</g>
+</g>
+</svg>
+<figcaption>Arriba, el flujo actual con sus esperas y vueltas de retrabajo; abajo, el propuesto. Rojo: la restricción del flujo (la decisión de crédito) y las piezas que necesitan IA. Recuadro: regla o flujo sin código; punteado: fase 2.</figcaption>
+</figure>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Qué es regla o flujo sin código y qué necesita IA</h2>
+<p class="lede" style="margin-top:10px">Seis de las nueve piezas del To-Be son reglas o flujos sin código; tres necesitan IA, y una de ellas llega en la fase 2. Solo diseño: nada de esto se construye en esta etapa.</p>
+<table class="stack"><thead><tr><th>Pieza</th><th>Tipo</th><th>Qué la dispara</th><th>Qué lee</th><th>Quién supervisa</th><th>Fase</th></tr></thead><tbody id="rpa"></tbody></table>
+<p class="note">Los flujos sin código se pueden armar en una herramienta como Make, que conecta hojas de cálculo, correo y mensajería. La consulta a Serasa se automatiza solo si el contrato incluye acceso por API [VERIFICAR]; si no, el asistente la registra en la cola. La carga de la NF-e por robot de pantalla (RPA) sobre un ERP sin API es frágil: queda como opción que aprueba el comité, no como plan.</p>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Supervisión humana del consultor</h2>
+<p class="lede" style="margin-top:10px">El borrador se produjo en modo lote: la IA propuso cada decisión con su recomendación y sus alternativas calculadas, y el consultor decidió.</p>
+<ul class="h">
+<li><b>Orden de las causas: B, A, C, por USD.</b> Los datos le ganan a la hipótesis inicial, que ponía primero la matriz de alzada; A sigue siendo el mayor cuello de tiempo.</li>
+<li><b>Intervención prioritaria: matriz de alzada (CU2 v1).</b> Es la restricción del flujo y no toca el ERP; la causa B se ataca en paralelo sin IA.</li>
+<li><b>Lectura de horas: 24 horas útiles = 1 día hábil.</b> Es el uso de "horas úteis" y la única lectura coherente con el ciclo de más de 5 días.</li>
+<li><b>Formulario de pedido con campos obligatorios, sin IA, en los meses 2–3.</b> Su costo queda dentro de la inversión de CU1 y su beneficio dentro de la captura de CU1: no se suma.</li>
+<li><b>Ishikawa en el informe como captura</b>, con el detalle en esta página.</li>
+<li><b>Criterio para salir de la sombra:</b> de los pedidos que las reglas autoaprobarían, el gerente aprobó al menos el 95 % y no rechazó ninguno por riesgo de crédito. El consultor descartó una concordancia global, que engaña porque casi todo se aprueba.</li>
+<li>Se mantienen las reglas de las etapas anteriores: lectura B de los USD 960.000 (decidida en la Etapa 2), ningún rechazo de crédito automático y ninguna escritura en el ERP sin API. Los boletos divergentes se expresan en pedidos al mes con el supuesto declarado de que el 6,8 % aplica a las NF-e B2B.</li>
+</ul>
+</section>
+
+<section class="rule" style="margin-top:48px">
+<h2>Prompt utilizado</h2>
+<div class="prompt"><pre id="p">ROL: Eres consultor senior de procesos (Lean, SIPOC, RPA) e IA aplicada a finanzas. Asesoras a la CEO de Taranis Black (muebles ergonómicos corporativos; operación en Brasil; matriz en São Paulo; CD en Joinville).
+
+CONTEXTO — flujo «Aprobación de pedidos, facturación y despacho» (doc 06 del kit): 180–220 pedidos B2B al mes; meta: 24 horas útiles de la firma al despacho; real: más de 5 días útiles.
+1. El vendedor envía el PDF firmado por correo a financiero@, sin validar stock, crédito ni CNPJ; en picos llegan más de 40 correos sin prioridad.
+2. El asistente cruza el ERP legado (sin API), el portal Serasa y Controle_Limites_2026.xlsx: 40 min por pedido. Si algo no cuadra (p. ej., razón social distinta de la tarjeta CNPJ), devuelve por correo al vendedor.
+3. El asistente arma un correo formal al gerente financiero (empresa, monto, condición 30-60-90, score). No hay motor de reglas: incluso USD 8.000 de clientes antiguos pasan por el gerente.
+4. El correo espera 24–48 h útiles; el vendedor presiona por WhatsApp.
+5. El asistente digita a mano la NF-e en el ERP (errores de código de producto e IE) y emite boletos 30/60/90.
+6. Tercer correo al CD de Joinville; si CIF/FOB no coincide, el camión queda retenido con diarias de almacenaje.
+SIPOC del kit (punto de partida, no copiar): proveedores (vendedores, asistentes, gerente, Serasa, CD y transportistas), entradas (PDF, CNPJ/IE/dirección, score, autorización, tabla de fletes), salidas (orden de venta, dictamen, autorización, DANFE/XML/boletos, picking y minuta), clientes (comprador, facturación, CD).
+
+DATOS (kit 05, hoja Cuellos_de_botella_y_costos): crédito 48 h vs máx. 4 h; boletos con divergencia 6,8 % de las NF-e vs &lt;0,5 %; reentregas y fletes de emergencia 2,8 % de la facturación vs techo 0,8 %; cierre 7 días vs 2.
+
+TAREA:
+1. Matriz SIPOC traspuesta (pasos en columnas). Por paso: proveedor, entrada, proceso, salida, cliente, dueño (un solo rol), tiempo, retrabajo, desperdicio Lean (espera, retrabajo, transporte de información, sobreprocesamiento, defectos) y un KPI.
+2. Barra del ciclo: qué parte de los más de 5 días mide el kit y qué parte no.
+3. Flujo As-Is → To-Be en una página.
+4. Tabla de piezas del To-Be: tipo (regla, flujo sin código tipo Make, IA generativa, IA predictiva), qué la dispara, qué lee, quién supervisa y fase.
+
+RESTRICCIONES:
+- Si el kit no mide algo, escribe "no medido en el kit". No inventes tiempos.
+- Toda cifra se rastrea a DATOS, al doc 06 o a un SUPUESTO declarado con su base.
+- Declara cómo lees "horas útiles" y por qué.
+- El ERP no tiene API: nada escribe en él automáticamente; la NF-e se carga con apoyo humano.
+- Ningún rechazo de crédito es automático. Usa IA solo donde una regla no alcanza.
+- Solo diseño: no construyas automatizaciones.
+- Español neutro profesional; la CEO debe entenderlo en 2 minutos.
+
+FORMATO: página HTML legible en una captura, con la matriz arriba, el flujo As-Is → To-Be y la tabla regla/IA.</pre></div>
+<button type="button" id="cp">Copiar prompt</button>
+</section>
+
+<footer style="margin-top:48px;border-top:1px solid var(--line);padding-top:14px">Elaborado por Carlos Hurtado Rojas. Fuentes: documento 06 del kit (proceso As-Is y SIPOC base) y archivo 05, hoja Cuellos_de_botella_y_costos. Los derivados y supuestos se declaran como tales.</footer>
+</div></main>
+<script>
+{
+const steps=[
+ {n:1,t:"Envío de la propuesta",S:"Cliente comprador; vendedor B2B",I:"Propuesta firmada en PDF",O:"Correo con el PDF a financiero@",C:"Asistente financiero",D:"Vendedor B2B (liderazgo comercial)",T:'<span class="nm">No medido en el kit.</span> Picos de más de 40 correos sin prioridad',R:'Propuestas incompletas devueltas desde el paso 2 <span class="nm">(frecuencia no medida)</span>',W:[["Defectos",1],["Transporte de información"]],K:"% de pedidos completos a la primera"},
+ {n:2,t:"Revisión y consulta de crédito",S:"ERP legado; Serasa Experian; Controle_Limites_2026.xlsx",I:"CNPJ, IE, dirección; historial; score, protestos y deudas; límite",O:"Datos compilados y dictamen preliminar",C:"Gerente financiero (vía paso 3)",D:"Asistente financiero",T:'<span class="hot">40 min de trabajo por pedido</span> (120–147 h al mes). <span class="nm">Cola en bandeja no medida</span>',R:'Correo al vendedor por cada inconsistencia <span class="nm">(no medido)</span>',W:[["Sobreprocesamiento",1],["Espera"],["Transporte de información"]],K:"Minutos por pedido; % de pedidos devueltos"},
+ {n:3,t:"Solicitud de aprobación",S:"Asistente financiero",I:"Resumen: empresa, monto, condición, score",O:"Correo formal al gerente",C:"Gerente financiero",D:"Asistente financiero",T:'<span class="nm">No medido en el kit</span>',R:"Reescribe datos ya compilados en la hoja",W:[["Sobreprocesamiento",1],["Transporte de información"]],K:"Desaparece en el To-Be"},
+ {n:4,t:"Decisión de alzada",S:"Gerente financiero",I:"Correo de solicitud",O:"«De acuerdo» por correo: autorización de facturación a plazo",C:"Facturación",D:"Gerente financiero",T:'<span class="hot">24–48 h útiles en bandeja.</span> Crédito: 48 h (meta ≤4 h)',R:"Seguimiento del vendedor por WhatsApp",W:[["Espera",1],["Sobreprocesamiento"]],K:"Horas de homologación (medido); % autoaprobado"},
+ {n:5,t:"Emisión de NF-e y boletos",S:"Asistente financiero; ERP legado",I:"Autorización y datos del PDF copiados a mano",O:"DANFE, XML de la NF-e, boletos 30/60/90",C:"Cliente comprador; contabilidad (cierre)",D:"Asistente financiero",T:'<span class="nm">No medido en el kit</span>',R:'<span class="hot">Boletos con divergencia: 6,8 % de las NF-e</span> (meta &lt;0,5 %), unos 12–15 al mes',W:[["Defectos",1],["Retrabajo",1],["Sobreprocesamiento"]],K:"% de NF-e con divergencia (medido)"},
+ {n:6,t:"Orden de expedición y despacho",S:"CD de Joinville; transportistas",I:"Correo de autorización; tabla de fletes y rutas",O:"Lista de picking y minuta de embarque",C:"Cliente comprador; transportista",D:"Jefatura del CD de Joinville",T:'<span class="nm">No medido en el kit.</span> Camión retenido si CIF/FOB no coincide <span class="nm">(diarias no medidas)</span>',R:'<span class="hot">Reentregas y fletes de emergencia: 2,8 % de la facturación</span> (techo 0,8 %)',W:[["Transporte de información"],["Espera"],["Defectos",1]],K:"Horas de la firma al despacho (meta 24 h útiles)"}
+];
+const rows=[["S","Proveedor"],["I","Entrada"],["O","Salida"],["C","Cliente"],["D","Dueño"],["T","Tiempo"],["R","Retrabajo"],["W","Desperdicio Lean"],["K","KPI"]];
+const cell=(k,s)=>k==="W"?s.W.map(w=>`<span class="w${w[1]?" e":""}">${w[0]}</span>`).join(""):s[k];
+let h='<div class="rh" role="columnheader">Paso<small>P · proceso</small></div>'+steps.map(s=>`<div class="st" role="columnheader"><b>${s.n}</b>${s.t}</div>`).join("");
+rows.forEach(([k,l])=>{h+=`<div class="rh" role="rowheader">${l}${k.length===1&&"SIOC".includes(k)?`<small>${k}</small>`:""}</div>`+steps.map(s=>`<div class="${k==="K"?"kpi":""}" role="cell">${cell(k,s)}</div>`).join("")});
+document.getElementById("sipoc").innerHTML=h;
+const rpa=[
+ ["Formulario de pedido con campos obligatorios",'<span class="tag">Regla · sin código</span>',"El vendedor cierra la negociación","Catálogo, tabla de precios única, registro de clientes","Liderazgo comercial","Mes 2–3 · costo dentro de CU1"],
+ ["Validación de CNPJ, IE, códigos, precio y CIF/FOB",'<span class="tag">Regla</span>',"Formulario enviado","Tabla de precios única, catálogo, registro","Asistente financiero (devoluciones)","Mes 2–3"],
+ ["Lectura del PDF firmado con confianza por campo (CU1)",'<span class="tag ia">IA generativa</span>',"Llega el PDF firmado","El PDF; lo coteja con el formulario","Vendedor confirma campos dudosos; asistente valida antes de la NF-e","Mes 6"],
+ ["Cola única con sello de tiempo por etapa (panel de SLA)",'<span class="tag">Flujo sin código</span>',"Cada cambio de estado del pedido","Registro del pedido","Gerente financiero; alerta al dueño de la etapa que supera su SLA","Mes 1"],
+ ["Motor de alzada (CU2 v1)",'<span class="tag">Regla</span>',"Pedido validado","Score y pendencias Serasa, hoja única de límites, historial exportado del ERP, monto y condición","Gerente financiero: excepciones y muestreo semanal","Sombra mes 2; activo mes 3"],
+ ["Resumen de cada excepción para el gerente",'<span class="tag ia">IA generativa</span>',"Pedido clasificado como excepción","Los mismos datos del motor","El gerente decide; ningún rechazo es automático","Mes 3"],
+ ["Avisos: al vendedor cuando el pedido vuelve y al CD con datos de carga",'<span class="tag">Flujo sin código</span>',"Estado «devuelto» o «NF-e emitida»","Registro validado y plantillas aprobadas","Asistente; jefatura del CD","Mes 2–3"],
+ ["Carga de la NF-e desde el registro validado",'<span class="tag">Regla · carga asistida</span>',"Pedido aprobado","Registro validado","El asistente revisa antes de emitir","Mes 6"],
+ ["Probabilidad de mora por cliente (CU3 → CU2 v2)",'<span class="tag ia v2">IA predictiva · fase 2</span>',"Cada pedido que entra al motor","Historial de boletos y pagos, Serasa","Gerente financiero y comité","Mes 12"]
+];
+const L=["Pieza","Tipo","Qué la dispara","Qué lee","Quién supervisa","Fase"];
+document.getElementById("rpa").innerHTML=rpa.map(r=>"<tr>"+r.map((c,i)=>`<td data-l="${L[i]}">${c}</td>`).join("")+"</tr>").join("");
+const b=document.getElementById("cp");
+b.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(document.getElementById("p").innerText);b.textContent="Copiado";}catch(e){b.textContent="Selecciona el texto y copia";}setTimeout(()=>{b.textContent="Copiar prompt";},2200);});
+}
+</script>
+<nav class="tbnav-foot" aria-label="Anterior y siguiente"><a href="politica-ia-responsable.html"><small>← Anterior · 03</small>Política de IA responsable</a><a class="ix" href="index.html">Índice</a><a class="nx" href="ishikawa-6m.html"><small>Siguiente · 05 →</small>Ishikawa 6M</a></nav></body>
+</html>
