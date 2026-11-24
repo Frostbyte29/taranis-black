@@ -43,6 +43,14 @@ h2{font-size:clamp(20px,2.2vw,26px)}
 .ev:focus-visible{outline:3px solid var(--red);outline-offset:4px}
 footer{color:var(--grey);font-size:13px;margin-top:48px;border-top:1px solid var(--line);padding-top:14px}
 @media (max-width:760px){.route{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:22px}.ev{grid-template-columns:56px minmax(0,1fr)}.go{display:none}}
+.dec{border-top:3px solid var(--ink);margin-top:22px}
+.dec li{display:grid;grid-template-columns:clamp(40px,5vw,64px) minmax(0,1fr);gap:clamp(12px,2vw,28px);padding:16px 0;border-bottom:1px solid var(--line);list-style:none}
+.dec ol{margin:0;padding:0}
+.dec .n{font-stretch:112%;font-weight:800;font-size:clamp(28px,3.4vw,40px);line-height:.9;color:var(--red)}
+.dec b.t{display:block;font-stretch:112%;font-weight:800;font-size:18px;line-height:1.2}
+.dec p{margin:6px 0 0;max-width:72ch}
+.dec .src{font-size:14px;color:var(--grey)}
+.dec a{color:var(--ink)}.dec a:hover{color:var(--red)}
 </style>
 </head>
 <body>
@@ -122,6 +130,18 @@ footer{color:var(--grey);font-size:13px;margin-top:48px;border-top:1px solid var
 <div class="go">Abrir →</div>
 </a>
 
+<section id="decisiones">
+<div class="part"><h2>Decisiones del consultor</h2><small>Supervisión humana: dónde la IA dio opciones y qué decidí</small></div>
+<p class="lede" style="margin-top:12px">La IA calculó y propuso; estas seis decisiones de criterio las tomé yo. Cada una está aplicada en la evidencia que se indica.</p>
+<div class="dec"><ol>
+<li><span class="n">1</span><div><b class="t">Repartir los USD 960.000 entre reentregas y fletes</b><p>Opciones: atribuirlos todos a fletes (techo de USD 1,475 millones para la validación en origen) o repartirlos entre reentregas (USD 515.000) y fletes (USD 445.000). Elegí el reparto por prudencia: es la lectura que menos promete hasta que contabilidad lo confirme.</p><p class="src">Aplicada en: <a href="matriz-esfuerzo-impacto.html">Matriz Esfuerzo × Impacto</a> y <a href="ai-canvas.html">AI Canvas</a></p></div></li>
+<li><span class="n">2</span><div><b class="t">Comprometer el escenario bajo</b><p>Opciones: comprometer el beneficio bajo, base o alto. Elegí el bajo (USD 0,63 millones al año) como cifra de compromiso y el base como esperado, para no prometer más de lo que el kit sostiene.</p><p class="src">Aplicada en: <a href="matriz-esfuerzo-impacto.html">Matriz Esfuerzo × Impacto</a></p></div></li>
+<li><span class="n">3</span><div><b class="t">Validar el pedido en dos pasos</b><p>La propuesta inicial validaba solo en el vendedor. La cambié a dos pasos: el vendedor confirma lo leído con baja confianza y el asistente financiero valida antes de emitir la NF-e, porque un error de lectura se vuelve factura fiscal y flete.</p><p class="src">Aplicada en: <a href="ai-canvas.html">AI Canvas</a>, caso 1</p></div></li>
+<li><span class="n">4</span><div><b class="t">Un mes en sombra antes de autoaprobar crédito</b><p>Opciones: autoaprobar desde el inicio o probar primero en sombra. Elegí un mes en que las reglas solo recomiendan y el gerente decide; se autoaprueba recién si el gerente aprobó al menos el 95 % de lo autoaprobable y no rechazó ninguno por riesgo.</p><p class="src">Aplicada en: <a href="sipoc-as-is-to-be.html">SIPOC y As-Is → To-Be</a> e <a href="ishikawa-6m.html">Ishikawa 6M</a></p></div></li>
+<li><span class="n">5</span><div><b class="t">69,3 %, no 70 %, como peso del B2B</b><p>El kit dice «70 %» de forma nominal; el cálculo sobre el estado de resultados da 69,3 %. Usé la cifra calculada en todo el informe y dejé el prompt tal como se ejecutó.</p><p class="src">Aplicada en: <a href="panel-financiero.html">Panel financiero</a></p></div></li>
+<li><span class="n">6</span><div><b class="t">Intervenir primero el crédito, aunque los datos cuesten más</b><p>Por dólares, la causa más cara es «datos sin fuente única» (USD 1,22 millones). Puntué la matriz GUT (crédito 80, datos 75, flujo 36) y prioricé el crédito: es la restricción por la que pasan todos los pedidos y se resuelve sin tocar el ERP.</p><p class="src">Aplicada en: el informe (Ruta 4, Etapa 1) y el <a href="ishikawa-6m.html">Ishikawa 6M</a></p></div></li>
+</ol></div>
+</section>
 <footer>Elaborado por Carlos Emilio Hurtado Rojas. Cifras del kit de datos del challenge.</footer>
 </div></main>
 </body>
